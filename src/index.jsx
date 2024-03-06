@@ -1,8 +1,17 @@
+/*
+ * React Project Index
+ * by Alex JPS, Eric Edwards
+ * 2024-03-06
+ *
+ * Handles rendering of the app
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+document.body.classList.add('background-red');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
