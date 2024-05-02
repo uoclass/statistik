@@ -10,13 +10,10 @@
 import React, {useEffect} from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {logRoles} from "@testing-library/react";
 
-// Pages
-import LandingPage from "./pages/LandingPage";
-import AboutPage from "./pages/AboutPage";
-import IpsumPage from "./pages/IpsumPage";
+// Routing
+import AuthProvider from "./provider/AuthProvider";
+import Routes from "./routes/index";
 
 // Styles
 import "./App.css";
@@ -27,22 +24,12 @@ function App() {
     useEffect(() => {document.body.classList.add('gray-background')}, []);
     return <div className="App">
         <AppHeader />
-        <AppBody />
+        <div className="App-body">
+            <AuthProvider>
+                <Routes />
+            </AuthProvider>
+        </div>
         <AppFooter />
-    </div>;
-}
-
-function AppBody() {
-    /* Decide which component to display based on the URL
-     */
-    return <div className={"App-body"}>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" exact element={<LandingPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/ipsum" element={<IpsumPage />} />
-            </Routes>
-        </BrowserRouter>
     </div>;
 }
 
