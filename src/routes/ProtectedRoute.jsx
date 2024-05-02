@@ -15,9 +15,9 @@ export const ProtectedRoute = () => {
     // check if user is authenticated
     if (!token) {
         // not authenticated, go back to login page
-        return <Navigate to="/" />;
-
-        // render the child routes
-        return <Outlet />
+        return <Navigate to="/"/>;
     }
+
+    // render the child routes
+    return <Outlet />
 }

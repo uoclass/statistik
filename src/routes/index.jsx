@@ -15,6 +15,7 @@ import AboutPage from "../pages/AboutPage";
 import IpsumPage from "../pages/IpsumPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
 import LoginPage from "../pages/LoginPage";
+import LogoutPage from "../pages/LogoutPage";
 
 
 const Routes = () => {
@@ -36,12 +37,24 @@ const Routes = () => {
                 {
                     path: "/",
                     element: <UserDashboardPage />
+                },
+                {
+                    path: "/dashboard",
+                    element: <UserDashboardPage />
+                },
+                {
+                    path: "/logout",
+                    element: <LogoutPage />
                 }
             ]
         }
     ];
 
     const routesUnauthenticated = [
+        {
+            path: "/",
+            element: <LandingPage />
+        },
         {
             path: "/login",
             element: <LoginPage />
@@ -60,7 +73,8 @@ const Routes = () => {
     const router = createBrowserRouter([
         // we use the ... operator to combine these arrays into one
         ...routesPublic,
-        ...(token ? routesAuthenticated : routesUnauthenticated)
+        ...(!token ? routesUnauthenticated : []),
+        ...routesAuthenticated
     ]);
 
     // provide configuration using RouterProvider
