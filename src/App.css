@@ -69,3 +69,7 @@ body {
   color: #666666;
   font-size: calc(8px + 1vmin);
 }
+
+.errorLabel {
+  color: red;
+}

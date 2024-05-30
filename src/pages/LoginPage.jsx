@@ -10,36 +10,90 @@
 // Packages
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // Styles
 import "../App.css";
 
 import { useAuth } from "../provider/AuthProvider";
 
-function LoginPage() {
-    /* This component displays the login page.
-     */
+
+/* This needs to be refactored because it makes hook calls but is not a react compnenent.
+function HandleLogin() {
     const { setToken } = useAuth();
     const navigate = useNavigate();
+    console.log("Logging in...");
+    setToken("this is a test token");
+    navigate("/", {replace: true});
+    return null;
+}
+*/
 
-    // FIXME use login tutorial to implement login functionality
-    const handleLogin = () => {
-        setToken("this is a test token");
-        navigate("/", {replace: true});
-    };
+/* This component displays the login page.
+ */
+function LoginPage(props) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
 
-    setTimeout(() => {
-        handleLogin();
-    }, 3 * 1000);
+    const navigate = useNavigate();
 
-    return <div>
-        <h1>
-            Login Page
-        </h1>
-        <p>
-            This is the login page, which should only be visible to unauthenticated users (i.e. before login).
-        </p>
-    </div>;
+    const onButtonClick = () => {
+        // set initial error values to empty
+        setEmailError("");
+        setPasswordError("");
+
+        // make sure that fields were correctly filled out
+        if (email === "") {
+            setEmailError("Please enter your email address");
+        }
+        if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+            setEmailError('Please enter a valid email address');
+            return;
+        }
+        if (password === "") {
+            setPasswordError("Please enter your password");
+        }
+
+        // make calls to verify authentication here
+
+        // HandleLogin()
+    }
+
+    return (
+        <>
+            <div className={"titleContainer"}>
+                <div>Login</div>
+            </div>
+            <br />
+            <div className={"inputContainer"}>
+                <input
+                    value={email}
+                    placeholder="Email address"
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={"inputBox"}
+                />
+                <br />
+                <label className={"errorLabel"}>{emailError}</label>
+            </div>
+            <br />
+            <div className={"inputContainer"}>
+                <input
+                    value={password}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={"inputBox"}
+                />
+                <br />
+                <label className={"errorLabel"}>{passwordError}</label>
+            </div>
+            <br />
+            <div className={"inputContainer"}>
+                <input className={"inputButton"} type="button" onClick={onButtonClick} value="Login" />
+            </div>
+        </>
+    )
 }
 
 export default LoginPage;
