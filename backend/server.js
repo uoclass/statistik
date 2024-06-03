@@ -12,6 +12,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql");
 require('dotenv').config({path: "./secretkey.env"});
 
 const app = express();
@@ -21,31 +22,34 @@ app.use(cors());
 // set the JWT secret key, protected by environment variable
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-// listen on port 8081 for MySQL connection
-app.listen(8081, () => {
-  console.log("Listening on port 8081");
-});
+
+// print my ip address
+const ip = require('ip');
+console.log(ip.address());
+
+console.log("Making sure the env variables work.");
+console.log(process.env.JWT_SECRET_KEY);
+
 
 // connect tickets database
-const mysql = require("mysql");
-const ticket_db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.USER_ID,
-  password: process.env.USER_PASSWORD,
-  database: "tickets",
-});
+// const ticket_db = mysql.createConnection({
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+// });
 
 const user_credentials_db = mysql.createConnection({
   host: process.env.DB_HOST,
-  user: process.env.USER_ID,
-  password: process.env.USER_PASSWORD,
-  database: "user_credentials",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: "user_credentials"
 });
 
-ticket_db.connect(function (err) {
-  if (err) throw err;
-  console.log("Ticket database connected.");
-});
+// ticket_db.connect(function (err) {
+//   if (err) throw err;
+//   console.log("Ticket database connected.");
+// });
 
 user_credentials_db.connect(function (err) {
   if (err) throw err;
@@ -74,6 +78,7 @@ app.get('/api', (req, res) => {
 
 // verification routes
 app.post("/api/auth", (req, res) => {
+  // NOTE this is a basic implementation of authentication, check the Clerk.com tutorial to improve later
   // take in username and password from request body
   const { username , password } = req.body;
 
@@ -117,10 +122,17 @@ app.post("/api/verify", (req, res) => {
 
   // verify the JWT token
   jwt.verify(token, jwtSecretKey, (err, decoded) => {
+    // here 'decoded' is the payload of the JWT token after verification
     if (err) {
       return res.send({ error: "Invalid JWT token" });
     }
 
+    // sending back the username means it's valid and proves we know the user
     return res.send({ username: decoded.username });
   });
+});
+
+// listen on port 3080
+app.listen(3080, () => {
+  console.log("Listening on port 8081");
 });

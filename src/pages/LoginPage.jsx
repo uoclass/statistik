@@ -57,8 +57,13 @@ function LoginPage(props) {
         }
 
         // make calls to verify authentication here
+        // NOTE could add an api endpoint and check here for whether an account exists
 
-        // HandleLogin()
+        HandleLogin()
+    }
+
+    const HandleLogin = () => {
+        // check the clerk tutorial here
     }
 
     return (
