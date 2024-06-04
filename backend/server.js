@@ -27,9 +27,6 @@ const jwtSecretKey = process.env.JWT_SECRET_KEY;
 const ip = require('ip');
 console.log(ip.address());
 
-console.log("Making sure the env variables work.");
-console.log(process.env.JWT_SECRET_KEY);
-
 
 // connect tickets database
 // const ticket_db = mysql.createConnection({
@@ -77,41 +74,41 @@ app.get('/api', (req, res) => {
 })
 
 // verification routes
-app.post("/api/auth", (req, res) => {
+app.post("/api/auth",  (req, res) => {
   // NOTE this is a basic implementation of authentication, check the Clerk.com tutorial to improve later
   // take in username and password from request body
-  const { username , password } = req.body;
+  const {email, password} = req.body;
 
   // find the matching entry in the SQL database
-  const password_hash_query = "SELECT password_hash FROM credentials WHERE username=?";
+  const password_hash_query = "SELECT password_hash FROM user_credentials WHERE username=?";
 
-  user_credentials_db.query(password_hash_query, username, async (err, data) => {
+  user_credentials_db.query(password_hash_query, email, async (err, data) => {
     if (err) {
       // send error message if query fails
-      return res.send({ error: "It is not possible to authenticate this user at this time (error 1001)" });
+      return res.send({error: "It is not possible to authenticate this user at this time (error 1001)"});
     }
 
     // make sure length of data is just one object (i.e. only one entry per username)
     if (data.length !== 1) {
-      return res.send({ error: "It is not possible to authenticate this user at this time (error 1002)" });
+      return res.send({error: "It is not possible to authenticate this user at this time (error 1002)"});
     }
 
     const passwordIsValid = await bcrypt.compare(password, data[0]["password_hash"]);
 
     // reject invalid password login
     if (!passwordIsValid) {
-      return res.send({ error: "Invalid password" });
+      return res.send({error: "Invalid password"});
     }
 
     // create a JWT token
     var token;
     try {
-      token = issue_new_jwt(username, "1h");
-    } catch (err)  {
-        return res.send({ error: "It is not possible to authenticate this user at this time (error 1003)" });
+      token = issue_new_jwt(email, "1h");
+    } catch (err) {
+      return res.send({error: "It is not possible to authenticate this user at this time (error 1003)"});
     }
 
-    return res.send(token);
+    return res.send({message: 'success', token: token});
   });
 });
 
@@ -134,5 +131,5 @@ app.post("/api/verify", (req, res) => {
 
 // listen on port 3080
 app.listen(3080, () => {
-  console.log("Listening on port 8081");
+  console.log("Listening on port 3080");
 });
