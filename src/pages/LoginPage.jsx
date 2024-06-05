@@ -59,7 +59,7 @@ function LoginPage(props) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({token}),
+                body: JSON.stringify({ token }),
             });
             const data = await response.json();
             if (data.message === "valid token") {
@@ -81,10 +81,10 @@ function LoginPage(props) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({email, password}),
+                body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
-            if (data.message === "login success") {
+            if (data.message === "success") {
                 // the login was successful
                 localStorage.setItem('token', data.token);
                 window.alert("The login was successful");
