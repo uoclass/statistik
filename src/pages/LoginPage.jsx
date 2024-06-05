@@ -24,6 +24,7 @@ function LoginPage(props) {
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -50,26 +51,62 @@ function LoginPage(props) {
         handleLogin()
     }
 
-    const handleLogin = () => {
-        console.log(`Sending login request to ${process.env.REACT_APP_API_URL}/api/auth`);
-        fetch(`${process.env.REACT_APP_API_URL}/api/auth`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({email, password}),
-        })
-            .then((response) => response.json())
-            .then(response => {
-                if (response.message === "login success") {
-                    localStorage.setItem('token', response.token);
-                    window.alert("The login was successful");
-                    navigate('/');
-                } else {
-                    window.alert(`The login failed with the following error:\n\n${response.error}`);
-                }
-            })
+    const validateToken = async (token) => {
+        console.log(`Sending token validation request to ${process.env.REACT_APP_API_URL}/api/verify`);
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({token}),
+            });
+            const data = await response.json();
+            if (data.message === "valid token") {
+                console.log("Token is valid");
+                return true;
+            }
+        } catch (error) {
+            console.error("Could not validate token: ", error);
+            return false;
+        }
     }
+
+    const handleLogin = async () => {
+        setLoading(true);
+        console.log(`Sending login request to ${process.env.REACT_APP_API_URL}/api/auth`);
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email, password}),
+            });
+            const data = await response.json();
+            if (data.message === "login success") {
+                // the login was successful
+                localStorage.setItem('token', data.token);
+                window.alert("The login was successful");
+                // make sure the token is valid and go to the dashboard
+                const isValid = await validateToken(data.token);
+                if (isValid) {
+                    // wait for 3 seconds
+                    navigate("/dashboard");
+                } else {
+                    window.alert("Token validation failed.");
+                }
+            } else {
+                window.alert(`The login failed with the following error:\n\n${data.error}`);
+            }
+        } catch (error) {
+            console.error("Could not login: ", error);
+            window.alert("An error occurred while trying to login.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     return (
         <>
@@ -85,7 +122,7 @@ function LoginPage(props) {
                     className={"inputBox"}
                 />
                 <br />
-                <label className={"errorLabel"}>{emailError}</label>
+                <label className={"error-label"}>{emailError}</label>
             </div>
             <br />
             <div className={"inputContainer"}>
@@ -96,7 +133,7 @@ function LoginPage(props) {
                     className={"inputBox"}
                 />
                 <br />
-                <label className={"errorLabel"}>{passwordError}</label>
+                <label className={"error-label"}>{passwordError}</label>
             </div>
             <br />
             <div className={"inputContainer"}>

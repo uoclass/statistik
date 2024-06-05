@@ -70,6 +70,16 @@ body {
   font-size: calc(8px + 1vmin);
 }
 
-.errorLabel {
+.error-label {
   color: red;
+}
+
+
+.redirect-error-banner {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
