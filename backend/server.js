@@ -112,6 +112,6 @@ app.post("/api/verify", (req, res) => {
     }
 
     // sending back the username means it's valid and proves we know the user
-    return res.send({ username: decoded.username });
+    return res.send({ message: 'valid token', username: decoded.username });
   });
 });
