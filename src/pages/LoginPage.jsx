@@ -73,7 +73,7 @@ function LoginPage(props) {
             .then((response) => response.json())
             .then(response => {
                 if ('success' === response.message) {
-                    localStorage.setItem('user', JSON.stringify({email, token: response.token}));
+                    localStorage.setItem('token', response.token);
                     window.alert("The login was successful");
                     navigate('/');
                 } else {
