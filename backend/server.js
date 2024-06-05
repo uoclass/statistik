@@ -12,104 +12,91 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const cors = require("cors");
-const mysql = require("mysql");
-require('dotenv').config({path: "../.env"});
+
+require("dotenv").config({ path: "../.env" });
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// set the JWT secret key, protected by environment variable
-const jwtSecretKey = process.env.JWT_SECRET_KEY;
+// sequelize models
+const db = require("./models");
+const { User, Ticket } = require("./models");
 
+// listen on port DB_PORT
+db.sequelize.sync().then((req) => {
+  app.listen(process.env.DB_PORT, () => {
+    console.log(`Listening on port ${process.env.DB_PORT}`);
+  });
+});
+
+// set the JWT secret key, protected by environment variable
+const jwtSecretKey = process.env.JWT_PRIV_KEY;
 
 // print my ip address
-const ip = require('ip');
+const ip = require("ip");
 console.log(ip.address());
 
-
-// connect tickets database
-// const ticket_db = mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-// });
-
-const user_credentials_db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: "user_credentials"
-});
-
-// ticket_db.connect(function (err) {
-//   if (err) throw err;
-//   console.log("Ticket database connected.");
-// });
-
-user_credentials_db.connect(function (err) {
-  if (err) throw err;
-  console.log("Credentials database connected.");
-});
-
-/* Helper function for issuing a new JWT to the user.
-This returns the JWT or an error message if the JWT could not be issued.
+/*
+ * Helper function for issuing a new JWT to the user.
+ * This returns the JWT or an error message if the JWT could not be issued.
  */
-function issue_new_jwt(username, expiration) {
-    try {
-        // create a new JWT token
-        return jwt.sign({username: username}, jwtSecretKey, {expiresIn: expiration,});
-    } catch (err) {
-        throw new Error("Could not issue a new JWT token.");
-    }
+function issue_new_jwt(r_username, expiration) {
+  try {
+    // create a new JWT token
+    return jwt.sign({ username: r_username }, jwtSecretKey, {
+      expiresIn: expiration,
+    });
+  } catch (err) {
+    throw new Error("Could not issue a new JWT token: " + err);
+  }
 }
-
 
 // API routes
 
 // Define home route for API
-app.get('/api', (req, res) => {
+app.get("/api", (req, res) => {
   res.send("You have reached the tstat-web authentication API");
-})
+});
 
 // verification routes
-app.post("/api/auth",  (req, res) => {
+app.post("/api/auth", async (req, res) => {
   // NOTE this is a basic implementation of authentication, check the Clerk.com tutorial to improve later
   // take in username and password from request body
-  const {email, password} = req.body;
 
-  // find the matching entry in the SQL database
-  const password_hash_query = "SELECT password_hash FROM user_credentials WHERE username=?";
+  console.log(req.params["username"]);
+  const { email, password } = req.body;
 
-  user_credentials_db.query(password_hash_query, email, async (err, data) => {
-    if (err) {
-      // send error message if query fails
-      return res.send({error: "It is not possible to authenticate this user at this time (error 1001)"});
-    }
-
-    // make sure length of data is just one object (i.e. only one entry per username)
-    if (data.length !== 1) {
-      return res.send({error: "It is not possible to authenticate this user at this time (error 1002)"});
-    }
-
-    const passwordIsValid = await bcrypt.compare(password, data[0]["password_hash"]);
-
-    // reject invalid password login
-    if (!passwordIsValid) {
-      return res.send({error: "It is not possible to authenticate this user at this time (error 1003)"});
-    }
-
-    // create a JWT token
-    var token;
-    try {
-      token = issue_new_jwt(email, "1h");
-    } catch (err) {
-      return res.send({error: "It is not possible to authenticate this user at this time (error 1004)"});
-    }
-
-    return res.send({message: 'login success', token: token});
+  const user = await User.findOne({
+    where: { username: email },
   });
+
+  if (!user.password) {
+    return res.status(401).send({ message: "User not found" });
+  }
+
+  console.log(`request password: ${password}, user.password: ${user.password}`);
+  const passwordIsValid = await bcrypt.compare(password, user.password);
+
+  // reject invalid password login
+  if (!passwordIsValid) {
+    return res.status(401).send({ error: "Invalid password" });
+  }
+  console.log("Password validated!");
+
+  // create a JWT token
+  var token;
+  try {
+    token = issue_new_jwt(email, "1h");
+  } catch (err) {
+    return res.send({
+      error:
+        "It is not possible to authenticate this user at this time (error 1003): " +
+        err,
+    });
+  }
+
+  return res.send({ message: "success", token: token });
 });
 
 // Define a route for verifying a JWT token
@@ -127,9 +114,4 @@ app.post("/api/verify", (req, res) => {
     // sending back the username means it's valid and proves we know the user
     return res.send({ message: 'valid token', username: decoded.username });
   });
-});
-
-// listen on port 3080
-app.listen(3080, () => {
-  console.log("Listening on port 3080");
 });
