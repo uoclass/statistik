@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
-require('dotenv').config({path: "./secretkey.env"});
+require('dotenv').config({path: "../.env"});
 
 const app = express();
 app.use(express.json());
@@ -97,7 +97,7 @@ app.post("/api/auth",  (req, res) => {
 
     // reject invalid password login
     if (!passwordIsValid) {
-      return res.send({error: "Invalid password"});
+      return res.send({error: "It is not possible to authenticate this user at this time (error 1003)"});
     }
 
     // create a JWT token
@@ -105,10 +105,10 @@ app.post("/api/auth",  (req, res) => {
     try {
       token = issue_new_jwt(email, "1h");
     } catch (err) {
-      return res.send({error: "It is not possible to authenticate this user at this time (error 1003)"});
+      return res.send({error: "It is not possible to authenticate this user at this time (error 1004)"});
     }
 
-    return res.send({message: 'success', token: token});
+    return res.send({message: 'login success', token: token});
   });
 });
 
@@ -125,7 +125,7 @@ app.post("/api/verify", (req, res) => {
     }
 
     // sending back the username means it's valid and proves we know the user
-    return res.send({ username: decoded.username });
+    return res.send({ message: 'valid token', username: decoded.username });
   });
 });
 

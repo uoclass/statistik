@@ -17,18 +17,6 @@ import "../App.css";
 
 import { useAuth } from "../provider/AuthProvider";
 
-
-/* This needs to be refactored because it makes hook calls but is not a react compnenent.
-function HandleLogin() {
-    const { setToken } = useAuth();
-    const navigate = useNavigate();
-    console.log("Logging in...");
-    setToken("this is a test token");
-    navigate("/", {replace: true});
-    return null;
-}
-*/
-
 /* This component displays the login page.
  */
 function LoginPage(props) {
@@ -59,11 +47,12 @@ function LoginPage(props) {
         // make calls to verify authentication here
         // NOTE could add an api endpoint and check here for whether an account exists
 
-        HandleLogin()
+        handleLogin()
     }
 
-    const HandleLogin = () => {
-        fetch('http://localhost:3080/api/auth', {
+    const handleLogin = () => {
+        console.log(`Sending login request to ${process.env.REACT_APP_API_URL}/api/auth`);
+        fetch(`${process.env.REACT_APP_API_URL}/api/auth`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,12 +61,12 @@ function LoginPage(props) {
         })
             .then((response) => response.json())
             .then(response => {
-                if ('success' === response.message) {
+                if (response.message === "login success") {
                     localStorage.setItem('token', response.token);
                     window.alert("The login was successful");
                     navigate('/');
                 } else {
-                    window.alert(response.error);
+                    window.alert(`The login failed with the following error:\n\n${response.error}`);
                 }
             })
     }
