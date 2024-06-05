@@ -4,4 +4,4 @@ build/*
 src/test-tickets.json
 node_modules
 .idea
-config/config.json
+backend/config/
