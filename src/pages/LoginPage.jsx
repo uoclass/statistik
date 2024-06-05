@@ -63,17 +63,17 @@ function LoginPage(props) {
     }
 
     const HandleLogin = () => {
-        fetch('http://localhost:3080/api/auth', {
+        fetch('http://localhost:3001/api/auth', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({email, password}),
+            body: JSON.stringify({ email, password }),
         })
             .then((response) => response.json())
             .then(response => {
                 if ('success' === response.message) {
-                    localStorage.setItem('user', JSON.stringify({email, token: response.token}));
+                    localStorage.setItem('user', JSON.stringify({ email, token: response.token }));
                     window.alert("The login was successful");
                     navigate('/');
                 } else {
