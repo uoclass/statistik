@@ -18,7 +18,7 @@ function UserDashboardPage() {
      */
     return <div>
         <h1>
-            User Dashboard
+            Dashboard
         </h1>
         <p>
             This is the user dashboard, which should only be visible after login.

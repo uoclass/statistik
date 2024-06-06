@@ -71,8 +71,8 @@ app.post("/api/auth", async (req, res) => {
     where: { username: email },
   });
 
-  if (!user.password) {
-    return res.status(401).send({ message: "User not found" });
+  if (!user) {
+    return res.status(401).send({ error: "Authentication Failed" });
   }
 
   console.log(`request password: ${password}, user.password: ${user.password}`);
@@ -80,7 +80,7 @@ app.post("/api/auth", async (req, res) => {
 
   // reject invalid password login
   if (!passwordIsValid) {
-    return res.status(401).send({ error: "Invalid password" });
+    return res.status(401).send({ error: "Authentication Failed" });
   }
   console.log("Password validated!");
 
