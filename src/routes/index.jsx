@@ -45,7 +45,7 @@ const Routes = () => {
                 {
                     path: "/logout",
                     element: <LogoutPage />
-                }
+                },
             ]
         }
     ];

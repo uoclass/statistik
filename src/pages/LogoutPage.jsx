@@ -30,7 +30,7 @@ function LogoutPage() {
 
     setTimeout(() => {
         handleLogout();
-    }, 3 * 1000);
+    }, 1 * 1000);
 
     return <div>
         <h1>
