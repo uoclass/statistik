@@ -1,7 +1,9 @@
 .DS_Store
 build/*
-.env
 src/test-tickets.json
 node_modules
 .idea
-backend/config/
+
+# private configuration
+.env
+config.json
