@@ -8,12 +8,13 @@
  */
 
 // imports
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const express = require("express");
-const cors = require("cors");
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
-require("dotenv").config({ path: "../.env" });
+dotenv.config({ path: "../.env" });
 
 const app = express();
 app.use(express.json());
