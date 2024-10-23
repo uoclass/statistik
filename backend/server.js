@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const cors = require("cors");
 
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: "../.env.local" });
 
 const app = express();
 app.use(express.json());
@@ -25,8 +25,8 @@ const { User, Ticket } = require("./models");
 
 // listen on port DB_PORT
 db.sequelize.sync().then((req) => {
-  app.listen(process.env.DB_PORT, () => {
-    console.log(`Listening on port ${process.env.DB_PORT}`);
+  app.listen(process.env.REACT_APP_DB_PORT, () => {
+    console.log(`Listening on port ${process.env.REACT_APP_DB_PORT}`);
   });
 });
 
@@ -112,6 +112,6 @@ app.post("/api/verify", (req, res) => {
     }
 
     // sending back the username means it's valid and proves we know the user
-    return res.send({ message: 'valid token', username: decoded.username });
+    return res.send({ message: "valid token", username: decoded.username });
   });
 });
