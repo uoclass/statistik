@@ -16,69 +16,79 @@ import IpsumPage from "../pages/IpsumPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
 import LoginPage from "../pages/LoginPage";
 import LogoutPage from "../pages/LogoutPage";
-
+import InvalidPage from "../pages/InvalidPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const Routes = () => {
-    const { token } = useAuth();
+  const { token } = useAuth();
 
-    // route configurations go here
-    const routesPublic = [
-        {
-            path: "/landing",
-            element: <LandingPage />
-        }
-    ];
+  // route configurations go here
 
-    const routesAuthenticated = [
+  const routesHidden = [
+    {
+      path: "/",
+      element: <ProtectedRoute />,
+      children: [
         {
-            path: "/",
-            element: <ProtectedRoute />,
-            children: [
-                {
-                    path: "/",
-                    element: <UserDashboardPage />
-                },
-                {
-                    path: "/dashboard",
-                    element: <UserDashboardPage />
-                },
-                {
-                    path: "/logout",
-                    element: <LogoutPage />
-                },
-            ]
-        }
-    ];
-
-    const routesUnauthenticated = [
-        {
-            path: "/",
-            element: <LandingPage />
+          path: "/",
+          element: <UserDashboardPage />,
         },
         {
-            path: "/login",
-            element: <LoginPage />
+          path: "/dashboard",
+          element: <UserDashboardPage />,
         },
         {
-            path: "/about",
-            element: <AboutPage />
+          path: "/logout",
+          element: <LogoutPage />,
         },
-        {
-            path: "/ipsum",
-            element: <IpsumPage />
-        }
-    ];
+      ],
+    },
+  ];
 
-    // decide which routes are available to user based on authentication status
-    const router = createBrowserRouter([
-        // we use the ... operator to combine these arrays into one
-        ...routesPublic,
-        ...(!token ? routesUnauthenticated : []),
-        ...routesAuthenticated
-    ]);
+  const routesUnauthenticatedOnly = [
+    {
+      path: "/login",
+      element: <LoginPage />,
+    },
+  ];
 
-    // provide configuration using RouterProvider
-    return <RouterProvider router={router} />;
+  const routesPublic = [
+    {
+      path: "/",
+      element: <LandingPage />,
+    },
+    {
+      path: "/about",
+      element: <AboutPage />,
+    },
+    {
+      path: "/ipsum",
+      element: <IpsumPage />,
+    },
+    {
+      path: "/invalid",
+      element: <InvalidPage />,
+    },
+    {
+      path: "/login",
+      element: <NotFoundPage />,
+    },
+    {
+      path: "*",
+      element: <NotFoundPage />,
+    },
+  ];
+
+  // decide which routes are available to user based on authentication status
+  const router = createBrowserRouter([
+    // we use the ... operator to combine these arrays into one
+    ...(!token ? routesUnauthenticatedOnly : []),
+    ...routesPublic,
+    ...routesHidden,
+  ]);
+
+  // provide configuration using RouterProvider
+  return <RouterProvider router={router} />;
 };
 
 export default Routes;
