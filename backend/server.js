@@ -115,3 +115,68 @@ app.post("/api/verify", (req, res) => {
     return res.send({ message: "valid token", username: decoded.username });
   });
 });
+
+// tdx data request routes
+async function fetchAdminApiToken(apiMode) {
+  // https://ufl.teamdynamix.com/TDWebApi/Home/section/Auth#POSTapi/auth/loginadmin
+
+  // header format:
+  // mode: TDWebApi | SBTDWebApi
+  if (apiMode !== "TDWebApi" && apiMode !== "SBTDWebApi") {
+    console.log(apiMode);
+    console.log("Undefined API mode. Use 'SBTDWebApi' or 'TDWebApi'");
+    return { error: "Undefined API mode." };
+  }
+  let api_url = `https://service.uoregon.edu/${apiMode}/api/auth/loginadmin`;
+
+  const credentials_body = JSON.stringify({
+    BEID: process.env.TDX_ADMIN_BEID,
+    WebServicesKey: process.env.TDX_ADMIN_WEBKEY,
+  });
+
+  // send post request to tdx api to recieve bearer token
+  return fetch(api_url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+    body: credentials_body,
+  })
+    .then((response) => console.log(response.status) || response)
+    .then((response) => response.text())
+    .then((body) => {
+      return body;
+    });
+}
+
+app.get("/api/fetch-tdx-report", async (req, res) => {
+  // report request parameters
+  const admin_bearer_token = await fetchAdminApiToken(
+    process.env.API_ENVIRONMENT_MODE,
+  );
+  const reportId = 224500; // tstat Standard Report id
+  const withData = true; // include data in http respones
+  const dataSortExpression = ""; // default sorting
+
+  // https://service.uoregon.edu/TDWebApi/api/reports/{id}?withData={withData}&dataSortExpression={dataSortExpression}
+  // GET.../reports/{id}?withData={withData}&dataSortExpression={dataSortExpression}
+
+  const saved_report_url = `https://service.uoregon.edu/TDWebApi/api/reports/${reportId}?withData=${withData}&dataSortExpression=${dataSortExpression}`;
+
+  const report_request = await fetch(saved_report_url, {
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      Authorization: `Bearer ${admin_bearer_token}`,
+    },
+    method: "GET",
+  });
+
+  if (!report_request.ok) {
+    return res.status(400).json({ error: "Failed to fetch report." });
+  }
+
+  const data = await report_request.json();
+  return res.json(data);
+});
+
+module.exports = { fetchAdminApiToken };
