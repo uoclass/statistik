@@ -5,6 +5,8 @@
  *
  * Validates username and password and provides a JWT token.
  * Also verifies JWT tokens.
+ *
+ * Provides functions for interfacing with TDX API, creating new users, and refreshing Ticket database.
  */
 
 // imports
@@ -14,6 +16,7 @@ const express = require("express");
 const cors = require("cors");
 
 require("dotenv").config({ path: "../.env.local" });
+require("dotenv").config({ path: ".env.local" });
 
 const app = express();
 app.use(express.json());
@@ -25,7 +28,7 @@ const { User, Ticket } = require("./models");
 
 // listen on port DB_PORT
 db.sequelize.sync().then((req) => {
-  app.listen(process.env.REACT_APP_DB_PORT, () => {
+  app.listen(process.env.REACT_APP_DB_PORT || 8080, () => {
     console.log(`Listening on port ${process.env.REACT_APP_DB_PORT}`);
   });
 });
@@ -56,7 +59,7 @@ function issue_new_jwt(r_username, expiration) {
 
 // Define home route for API
 app.get("/api", (req, res) => {
-  res.send("You have reached the tstat-web authentication API");
+  res.send("You have reached the tstat-web API");
 });
 
 // verification routes
@@ -116,11 +119,9 @@ app.post("/api/verify", (req, res) => {
   });
 });
 
-// tdx data request routes
+// tdx data request helpers
 async function fetchAdminApiToken(apiMode) {
   // https://ufl.teamdynamix.com/TDWebApi/Home/section/Auth#POSTapi/auth/loginadmin
-
-  // header format:
   // mode: TDWebApi | SBTDWebApi
   if (apiMode !== "TDWebApi" && apiMode !== "SBTDWebApi") {
     console.log(apiMode);
@@ -148,8 +149,7 @@ async function fetchAdminApiToken(apiMode) {
       return body;
     });
 }
-
-app.get("/api/fetch-tdx-report", async (req, res) => {
+async function fetchTicketReport() {
   // report request parameters
   const admin_bearer_token = await fetchAdminApiToken(
     process.env.API_ENVIRONMENT_MODE,
@@ -158,10 +158,10 @@ app.get("/api/fetch-tdx-report", async (req, res) => {
   const withData = true; // include data in http respones
   const dataSortExpression = ""; // default sorting
 
-  // https://service.uoregon.edu/TDWebApi/api/reports/{id}?withData={withData}&dataSortExpression={dataSortExpression}
-  // GET.../reports/{id}?withData={withData}&dataSortExpression={dataSortExpression}
-
-  const saved_report_url = `https://service.uoregon.edu/TDWebApi/api/reports/${reportId}?withData=${withData}&dataSortExpression=${dataSortExpression}`;
+  // format the report uri
+  const saved_report_url =
+    `https://service.uoregon.edu/${process.env.API_ENVIRONMENT_MODE}` +
+    `/api/reports/${reportId}?withData=${withData}&dataSortExpression=${dataSortExpression}`;
 
   const report_request = await fetch(saved_report_url, {
     headers: {
@@ -172,11 +172,68 @@ app.get("/api/fetch-tdx-report", async (req, res) => {
   });
 
   if (!report_request.ok) {
-    return res.status(400).json({ error: "Failed to fetch report." });
+    return { error: "Failed to fetch report." };
   }
 
   const data = await report_request.json();
+  return data;
+}
+
+app.get("/api/tickets/fetch-report", async (req, res) => {
+  const data = await fetchTicketReport();
+
+  if (data.error) {
+    return res.status(400).json({ error: "Failed to fetch report." });
+  }
+
   return res.json(data);
 });
 
-module.exports = { fetchAdminApiToken };
+async function refreshTicketData() {
+  const data = await fetchTicketReport();
+
+  const { DataRows, DisplayedColumns } = data;
+  // insert members of data into Tickets table -> data.DataRows[0] -> [len(DataRows)]
+  //
+  // iterate through each row in the DataRows array
+  for (let i = 0; i < DataRows.length; i++) {
+    const row = DataRows[i];
+    try {
+      await Ticket.create({
+        data: {
+          ticket_id: row.TicketID,
+          title: row.Title,
+          assigned_to: row.ResponsibleGroupName,
+          requester: row.CustomerName,
+          email: row.ContactEmail,
+          department: row.AccountName,
+          location: row.LocationName,
+          room: row.LocationRoomName,
+          created: row.CreatedDate,
+          modified: row.LastModifiedDate,
+          status: row.StatusName,
+          diagnoses: row["132559"], // NOTE -> This corresponds to the "diagnosis" header. Could refactor to read from { }
+        },
+      });
+    } catch (error) {
+      console.error(`Error inserting ticket ${row.ID}: ${error}`);
+      return { error: error };
+    }
+  }
+  const message = { message: "Completed update in refreshTicketData()" };
+  console.log(message.message);
+  return message;
+}
+
+app.post("/api/tickets/refresh-report", async (req, res) => {
+  const update = await refreshTicketData();
+
+  if (update.error) {
+    return res
+      .status(400)
+      .json({ error: "Failed to update database to most recent report." });
+  }
+
+  return res.status(200).json({ message: "Completed report update." });
+});
+module.exports = { fetchAdminApiToken, refreshTicketData };
