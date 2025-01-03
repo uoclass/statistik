@@ -8,4 +8,7 @@ node_modules
 .env
 .env.local
 config.json
+
+# scripts
 user_create_script.sh
+start_all.sh
