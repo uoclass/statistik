@@ -14,7 +14,7 @@ import { useLocation } from "react-router-dom";
 // Styles
 import "../App.css";
 
-function InvalidPage() {
+function NotFoundPage() {
   /* This component displays the logout page.
    */
 
@@ -35,4 +35,4 @@ function InvalidPage() {
   );
 }
 
-export default InvalidPage;
+export default NotFoundPage;
