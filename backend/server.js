@@ -57,68 +57,6 @@ function issue_new_jwt(r_username, expiration) {
 
 // API routes
 
-// Define home route for API
-app.get("/api", (req, res) => {
-  res.send("You have reached the tstat-web API");
-});
-
-// verification routes
-app.post("/api/auth", async (req, res) => {
-  // NOTE this is a basic implementation of authentication, check the Clerk.com tutorial to improve later
-  // take in username and password from request body
-
-  console.log(req.params["username"]);
-  const { email, password } = req.body;
-
-  const user = await User.findOne({
-    where: { username: email },
-  });
-
-  if (!user) {
-    return res.status(401).send({ error: "Authentication Failed" });
-  }
-
-  console.log(`request password: ${password}, user.password: ${user.password}`);
-  const passwordIsValid = await bcrypt.compare(password, user.password);
-
-  // reject invalid password login
-  if (!passwordIsValid) {
-    return res.status(401).send({ error: "Authentication Failed" });
-  }
-  console.log("Password validated!");
-
-  // create a JWT token
-  var token;
-  try {
-    token = issue_new_jwt(email, "1h");
-  } catch (err) {
-    return res.send({
-      error:
-        "It is not possible to authenticate this user at this time (error 1003): " +
-        err,
-    });
-  }
-
-  return res.send({ message: "success", token: token });
-});
-
-// Define a route for verifying a JWT token
-app.post("/api/verify", (req, res) => {
-  // take in JWT token from request body
-  const token = req.body.token;
-
-  // verify the JWT token
-  jwt.verify(token, jwtSecretKey, (err, decoded) => {
-    // here 'decoded' is the payload of the JWT token after verification
-    if (err) {
-      return res.send({ error: "Invalid JWT token" });
-    }
-
-    // sending back the username means it's valid and proves we know the user
-    return res.send({ message: "valid token", username: decoded.username });
-  });
-});
-
 // tdx data request helpers
 async function fetchAdminApiToken(apiMode) {
   // https://ufl.teamdynamix.com/TDWebApi/Home/section/Auth#POSTapi/auth/loginadmin
@@ -149,7 +87,7 @@ async function fetchAdminApiToken(apiMode) {
       return body;
     });
 }
-async function fetchTicketReport() {
+async function fetchNewTicketReport() {
   // report request parameters
   const admin_bearer_token = await fetchAdminApiToken(
     process.env.API_ENVIRONMENT_MODE,
@@ -179,22 +117,54 @@ async function fetchTicketReport() {
   return data;
 }
 
-app.get("/api/tickets/fetch-report", async (req, res) => {
-  const data = await fetchTicketReport();
+const ticketDataKeys = [
+  "ticket_id",
+  "title",
+  "assigned_to",
+  "requester",
+  "email",
+  "department",
+  "location",
+  "room",
+  "created",
+  "modified",
+  "status",
+  "diagnoses",
+];
 
-  if (data.error) {
-    return res.status(400).json({ error: "Failed to fetch report." });
-  }
+/**
+ * Takes in a filter object and returns a formatted object suitable for a Sequelize 'where' query.
+ * @param {Object} filter - An object that includes the filter properties to query the report cache with.
+ */
+function formatQueryFilter(filter) {
+  let whereClause = Object.fromEntries(
+    ticketDataKeys.reduce((result, key) => {
+      if (filter[key]) {
+        result.push(["jsonAttribute." + key, filter[key]]);
+      }
+      return result;
+    }, []),
+  );
 
-  return res.json(data);
-});
+  return whereClause;
+}
+
+async function fetchTicketsFromReportCache(filter) {
+  const formattedFilter = formatQueryFilter(filter);
+
+  const tickets = await Ticket.findAll({
+    where: formattedFilter,
+  });
+
+  return tickets;
+}
 
 async function refreshTicketData() {
-  const data = await fetchTicketReport();
+  const data = await fetchNewTicketReport();
 
   const { DataRows, DisplayedColumns } = data;
   // insert members of data into Tickets table -> data.DataRows[0] -> [len(DataRows)]
-  //
+
   // iterate through each row in the DataRows array
   for (let i = 0; i < DataRows.length; i++) {
     const row = DataRows[i];
@@ -212,7 +182,7 @@ async function refreshTicketData() {
           created: row.CreatedDate,
           modified: row.LastModifiedDate,
           status: row.StatusName,
-          diagnoses: row["132559"], // NOTE -> This corresponds to the "diagnosis" header. Could refactor to read from { }
+          diagnoses: row["132559"], // NOTE -> This corresponds to the "diagnosis" header. Could refactor to read from { DisplayedColumns }
         },
       });
     } catch (error) {
@@ -225,6 +195,90 @@ async function refreshTicketData() {
   return message;
 }
 
+/** HTTP API ENDPOINTS **/
+
+app.get("/api", (req, res) => {
+  res.send("You have reached the Statistik API");
+});
+
+/* Verification Endpoints */
+
+/* JWT Authorization: POST { enail: <username>, password: <password> } */
+app.post("/api/auth", async (req, res) => {
+  // NOTE this is a basic implementation of authentication, check the Clerk.com tutorial to improve later
+  // take in username and password from request body
+
+  console.log(req.params["username"]);
+  const { email, password } = req.body;
+
+  const user = await User.findOne({
+    where: { username: email },
+  });
+
+  if (!user) {
+    return res.status(401).send({ error: "Authentication Failed" });
+  }
+
+  console.log(`request password: ${password}, user.password: ${user.password}`);
+  const passwordIsValid = await bcrypt.compare(password, user.password);
+
+  // reject invalid password login
+  if (!passwordIsValid) {
+    return res.status(401).send({ error: "Authentication Failed" });
+  }
+  console.log("Password validated!");
+
+  // create JWT token
+  var token;
+  try {
+    token = issue_new_jwt(email, "1h");
+  } catch (err) {
+    return res.send({
+      error:
+        "It is not possible to authenticate this user at this time (error 1003): " +
+        err,
+    });
+  }
+
+  return res.send({ message: "success", token: token });
+});
+
+/* JWT Verification: POST { token: <token> } */
+app.post("/api/verify", (req, res) => {
+  // take in JWT token from request body
+  const token = req.body.token;
+
+  // verify the JWT token
+  jwt.verify(token, jwtSecretKey, (err, decoded) => {
+    // here 'decoded' is the payload of the JWT token after verification
+    if (err) {
+      return res.send({ error: "Invalid JWT token" });
+    }
+
+    // sending back the username means it's valid and proves we know the user
+    return res.send({ message: "valid token", username: decoded.username });
+  });
+});
+
+/* Ticket Database Interaction Endpoints */
+
+/* TDX Filtered Ticket Fetching from Report Cache: POST { ticketFilter: {<filter>: <parameter>,} } */
+app.get("/api/tickets/fetch-filtered-tickets", async (req, res) => {
+  return res.send();
+});
+
+/* TDX Report Fetching: GET */
+app.get("/api/tickets/fetch-new-report", async (req, res) => {
+  const data = await fetchNewTicketReport();
+
+  if (data.error) {
+    return res.status(400).json({ error: "Failed to fetch report." });
+  }
+
+  return res.json(data);
+});
+
+/* Ticket Report Cache Refreshing: POST {} */
 app.post("/api/tickets/refresh-report", async (req, res) => {
   const update = await refreshTicketData();
 
@@ -236,4 +290,5 @@ app.post("/api/tickets/refresh-report", async (req, res) => {
 
   return res.status(200).json({ message: "Completed report update." });
 });
+
 module.exports = { fetchAdminApiToken, refreshTicketData };
