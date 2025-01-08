@@ -1,0 +1,10 @@
+.Nav-list li {
+    padding: 5px 0px 0px 0px;
+    display: inline;
+    margin-right: 20px;
+}
+
+.Nav-list a {
+    color: #aaaaaa;
+    text-decoration: none;
+}
