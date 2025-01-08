@@ -18,6 +18,7 @@ import LoginPage from "../pages/LoginPage";
 import LogoutPage from "../pages/LogoutPage";
 import InvalidPage from "../pages/InvalidPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import ViewCreationPage from "../pages/ViewCreationPage";
 
 const Routes = () => {
   const { token } = useAuth();
@@ -40,6 +41,10 @@ const Routes = () => {
         {
           path: "/logout",
           element: <LogoutPage />,
+        },
+        {
+          path: "/new-view",
+          element: <ViewCreationPage />,
         },
       ],
     },

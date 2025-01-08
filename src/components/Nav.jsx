@@ -10,7 +10,7 @@ function Nav() {
           <a href="/dashboard">dashboard</a>
         </li>
         <li>
-          <a href="/create-view">new view</a>
+          <a href="/new-view">new view</a>
         </li>
         <li>
           <a href="/database">database</a>
