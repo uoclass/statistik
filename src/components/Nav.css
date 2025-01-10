@@ -1,10 +1,27 @@
+.Nav {
+    padding: 0px 0px;
+    width: 100%;
+}
+
+.Nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    justify-content: space-between;
+}
+
 .Nav-list li {
-    padding: 5px 0px 0px 0px;
-    display: inline;
-    margin-right: 20px;
+    display: inline-block;
+    padding-right: 15px;
 }
 
 .Nav-list a {
     color: #aaaaaa;
     text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.Nav-list a:hover {
+    color: #666666;
 }
