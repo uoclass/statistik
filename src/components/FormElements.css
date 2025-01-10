@@ -1,0 +1,17 @@
+.form-select {
+  /* Remove default appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Set background color */
+  background-color: white;
+  border-radius: 0px;
+
+  /* Remove border and add outline for focus */
+  border: none;
+  outline: 1px solid gray;
+
+  /* Add padding for better appearance */
+  padding: 5px 50px 5px 20px;
+}

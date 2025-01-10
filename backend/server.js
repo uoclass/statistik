@@ -87,6 +87,7 @@ async function fetchAdminApiToken(apiMode) {
       return body;
     });
 }
+
 async function fetchNewTicketReport() {
   // report request parameters
   const admin_bearer_token = await fetchAdminApiToken(
@@ -276,6 +277,11 @@ app.get("/api/tickets/fetch-new-report", async (req, res) => {
   }
 
   return res.json(data);
+});
+
+/* Get date and time that Report Cache was generated */
+app.get("/api/tickets/report-cache-generation-time", async (req, res) => {
+  return res.status(200).json({date: 1736374451097 });
 });
 
 /* Ticket Report Cache Refreshing: POST {} */

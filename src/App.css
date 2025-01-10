@@ -91,11 +91,3 @@ body {
   color: #AAAAAA;
   text-decoration: none;
 }
-
-.grey-callout-box {
-  background-color: lightgray;
-  border-radius: 5px;
-  padding: 20px;
-  margin: 20px 0px 20px 0px;
-
-}
