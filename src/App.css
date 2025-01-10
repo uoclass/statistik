@@ -14,27 +14,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.code-text {
-    font-weight: bolder;
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-        monospace;
-}
-
-.button {
-    font-size: calc(10px + 1vh);
-    font-weight: bold;
-    border-radius: 20px;
-    color: white;
-    background-color: #3b4a61;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
-    border: none;
-}
-
-.button:hover {
-    background-color: #2c3a4c;
-    cursor: pointer;
-}
-
 .gray-background {
     background-color: #e9ecef;
 }
@@ -101,11 +80,4 @@ body {
 .Nav-list a {
   color: #AAAAAA;
   text-decoration: none;
-}
-
-.grey-callout-box {
-    background-color: lightgray;
-    border-radius: 5px;
-    padding: 20px;
-    margin: 20px 0px 20px 0px;
 }

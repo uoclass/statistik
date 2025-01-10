@@ -21,13 +21,11 @@ function LandingPage() {
      */
     return <div>
         <h1>
-            Welcome to <span className={"code-text"}>tstat-web</span>!
+            Welcome to <b>Statistik</b>!
         </h1>
         <p>
             This is a web-based interface for analyzing ticket metadata for UO Classroom Technology Support
         </p>
-        <Button text={"Create Graph"} onClick={() => console.log("User clicked Create Graph")}/>
-
     </div>;
 }
 
