@@ -1,3 +1,5 @@
+import "./Nav.css";
+
 function Nav() {
   /*
    * This component defines the Navbar format.
