@@ -8,22 +8,21 @@
  */
 
 // Packages
-import React from 'react';
+import React from "react";
 
 // Styles
-import "../App.css";
 
 function UserDashboardPage() {
-    /* This component displays the landing page.
-     */
-    return <div>
-        <h1>
-            Dashboard
-        </h1>
-        <p>
-            This is the user dashboard, which should only be visible after login.
-        </p>
-    </div>;
+  /* This component displays the landing page.
+   */
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>
+        This is the user dashboard, which should only be visible after login.
+      </p>
+    </div>
+  );
 }
 
 export default UserDashboardPage;

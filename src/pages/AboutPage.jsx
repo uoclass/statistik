@@ -8,17 +8,18 @@
  */
 
 // Packages
-import React from 'react';
+import React from "react";
 
 // Styles
-import "../App.css";
 
 function AboutPage() {
-    /* This component displays the about page.
-     */
-    return <div>
-        <h1>The About Page</h1>
-    </div>;
+  /* This component displays the about page.
+   */
+  return (
+    <div>
+      <h1>The About Page</h1>
+    </div>
+  );
 }
 
 export default AboutPage;

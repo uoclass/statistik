@@ -25,3 +25,7 @@
 .Nav-list a:hover {
     color: #666666;
 }
+
+.Nav-list a.active {
+    color: red;
+}

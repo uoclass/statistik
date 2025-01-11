@@ -12,7 +12,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 // Styles
-import "../App.css";
 
 import { useAuth } from "../provider/AuthProvider";
 

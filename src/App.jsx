@@ -8,21 +8,12 @@
 
 // Packages
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-
+import { RouterProvider } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
 // Routing
 import AuthProvider from "./provider/AuthProvider";
-import Routes from "./routes/index";
-
-// Components
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Nav from "./components/Nav";
-
-// Styles
-import "./App.css";
+import Routes from "./routes/Routes";
 
 function App() {
   /* This component serves as the root of the app.
@@ -30,20 +21,11 @@ function App() {
   useEffect(() => {
     document.body.classList.add("white-background");
   }, []);
+  const router = Routes();
   return (
-    <div className="App">
-      <div className="App-content">
-        <Header />
-        <Nav />
-        <div className="App-body">
-          <AuthProvider>
-            <Routes />
-          </AuthProvider>
-        </div>
-
-        <Footer />
-      </div>
-    </div>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 

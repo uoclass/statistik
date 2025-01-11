@@ -19,9 +19,10 @@ import LogoutPage from "../pages/LogoutPage";
 import InvalidPage from "../pages/InvalidPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ViewCreationPage from "../pages/ViewCreationPage";
+import Layout from "../components/Layout";
 
-const Routes = () => {
-  const { token } = useAuth();
+function Routes() {
+  const token = useAuth();
 
   // route configurations go here
 
@@ -86,14 +87,19 @@ const Routes = () => {
 
   // decide which routes are available to user based on authentication status
   const router = createBrowserRouter([
-    // we use the ... operator to combine these arrays into one
-    ...(!token ? routesUnauthenticatedOnly : []),
-    ...routesPublic,
-    ...routesHidden,
+    {
+      element: <Layout />,
+      children: [
+        // we use the ... operator to combine these arrays into one
+        ...(!token ? routesUnauthenticatedOnly : []),
+        ...routesPublic,
+        ...routesHidden,
+      ],
+    },
   ]);
 
   // provide configuration using RouterProvider
-  return <RouterProvider router={router} />;
-};
+  return router;
+}
 
 export default Routes;

@@ -12,7 +12,6 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 // Styles
-import "../App.css";
 
 function NotFoundPage() {
   /* This component displays the logout page.

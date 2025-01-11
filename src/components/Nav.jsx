@@ -1,36 +1,34 @@
+import React from "react";
+import { NavLink } from "react-router-dom";
 import "./Nav.css";
 
 function Nav() {
-  /*
-   * This component defines the Navbar format.
-   */
-
   return (
-    <div className="Nav">
+    <nav className="Nav">
       <ul className="Nav-list">
         <li>
-          <a href="/dashboard">dashboard</a>
+          <NavLink to="/dashboard">dashboard</NavLink>
         </li>
         <li>
-          <a href="/new-view">new view</a>
+          <NavLink to="/new-view">new view</NavLink>
         </li>
         <li>
-          <a href="/database">database</a>
+          <NavLink to="/database">database</NavLink>
         </li>
         <li>
-          <a href="/settings">settings</a>
+          <NavLink to="/settings">settings</NavLink>
         </li>
         <li>
-          <a href="/user-guide">user guide</a>
+          <NavLink to="/user-guide">user guide</NavLink>
         </li>
         <li>
-          <a href="/about">about</a>
+          <NavLink to="/about">about</NavLink>
         </li>
         <li>
-          <a href="/login">sign in</a>
+          <NavLink to="/login">sign in</NavLink>
         </li>
       </ul>
-    </div>
+    </nav>
   );
 }
 

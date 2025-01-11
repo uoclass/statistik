@@ -11,7 +11,6 @@
 import React from "react";
 
 // Styles
-import "../App.css";
 
 function InvalidPage() {
   /* This component displays the logout page.

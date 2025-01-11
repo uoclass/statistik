@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 // Styles
-import "../App.css";
 
 import { useAuth } from "../provider/AuthProvider";
 

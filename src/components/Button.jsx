@@ -7,14 +7,15 @@
  */
 
 // Packages
-import React from 'react';
+import React from "react";
 
 // Styles
-import "../App.css";
 
-function Button({text, onClick}) {
-    return <button className={"button"} onClick={onClick}>
-            {text}
-        </button>;
+function Button({ text, onClick }) {
+  return (
+    <button className={"button"} onClick={onClick}>
+      {text}
+    </button>
+  );
 }
 export default Button;
