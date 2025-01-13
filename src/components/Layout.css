@@ -26,15 +26,9 @@ body {
 }
 
 .App-content {
-    margin-left: 20px;
-    flex: 1;
-    flex-direction: row;
-}
-
-@media (min-width: 850px) {
-    .App-content {
-        margin: 0 20% 0 20%;
-    }
+    width: 800px;
+    margin: 0 auto; /* Center the content horizontally */
+    max-width: 90%; /* Ensures the content never exceeds 90% of the viewport width */
 }
 
 .App-header {
@@ -44,9 +38,7 @@ body {
 }
 
 .App-body {
-    margin-top: calc(15px + 1vh);
-    margin-bottom: calc(15px + 1vh);
-    margin: 0px 0px;
+    margin: calc(15px + 1vh) 0px calc(15px + 1vh) 0px;
     border: 50px 50px;
     font-size: calc(10px + 1vmin);
     min-height: 77vh;

@@ -21,11 +21,11 @@ function ConfigurationMenu() {
                 <label>
                     <p>
                         <label htmlFor="term-start">Term start</label> <br/>
-                        <input type="date" id="term-start"/>
+                        <input className="form-input-date" type="date" id="term-start"/>
                     </p>
                     <p>
                         <label htmlFor="term-end">Term end</label> <br/>
-                        <input type="date" id="term-end"/>
+                        <input className="form-input-date" type="date" id="term-end"/>
                     </p>
                     <p>
                         <label htmlFor="view-layout">View layout</label> <br/>

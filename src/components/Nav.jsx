@@ -13,9 +13,6 @@ function Nav() {
           <NavLink to="/new-view">new view</NavLink>
         </li>
         <li>
-          <NavLink to="/database">database</NavLink>
-        </li>
-        <li>
           <NavLink to="/settings">settings</NavLink>
         </li>
         <li>

@@ -3,6 +3,30 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+p {
+    font-size: 1rem;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: normal;
+    color: black;
+}
+
+/* Remove calendar icon on date selection field (doesn't work on Firefox) */
+/*
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+*/
+
+
+.form-select, .form-input-date {
+  font-size: 1rem;
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: normal;
+  color: black;
 
   /* Set background color */
   background-color: white;
@@ -13,5 +37,5 @@
   outline: 1px solid gray;
 
   /* Add padding for better appearance */
-  padding: 5px 50px 5px 20px;
+  padding: 0.25rem 2rem 0.25rem 1rem;
 }
