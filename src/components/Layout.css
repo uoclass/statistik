@@ -20,15 +20,15 @@ body {
 
 .App {
     background-color: #ffffff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 .App-content {
     width: 800px;
     margin: 0 auto; /* Center the content horizontally */
     max-width: 90%; /* Ensures the content never exceeds 90% of the viewport width */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .App-header {
@@ -39,9 +39,8 @@ body {
 
 .App-body {
     margin: calc(15px + 1vh) 0px calc(15px + 1vh) 0px;
-    border: 50px 50px;
     font-size: calc(10px + 1vmin);
-    min-height: 77vh;
+    flex: 1;
 }
 
 .App-footer {

@@ -6,7 +6,7 @@ function Footer() {
       <p>
         For exclusive use by UO Classroom Technology Support.
         <br />
-        Developed by Eric Edwards and Alex JPS.
+        Developed by Eric Edwards and Alex João Peterson Santos.
       </p>
     </footer>
   );
