@@ -30,11 +30,12 @@ function ConfigurationMenu() {
                     <p>
                         <label htmlFor="view-layout">View layout</label> <br/>
                         <select className={"form-select"} name="view-layout">
-                            <option>Tickets by requestor</option>
-                            <option>Tickets by diagnosis</option>
-                            <option>Tickets by week</option>
-                            <option>Tickets by building</option>
-                            <option>Tickets by room</option>
+                            <option value="" selected disabled >Select one</option>
+                            <option value="1">Tickets by requestor</option>
+                            <option value="2">Tickets by diagnosis</option>
+                            <option value="3">Tickets by week</option>
+                            <option value="4">Tickets by building</option>
+                            <option value="5">Tickets by room</option>
                         </select>
                     </p>
                 </label>
