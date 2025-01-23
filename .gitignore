@@ -1,8 +1,10 @@
-<<<<<<< HEAD
 .DS_Store
-build/*
-src/test-tickets.json
-=======
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # Logs
 logs
 *.log
@@ -12,17 +14,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
->>>>>>> f82a237 (feat: Major refactor)
 node_modules
 dist
 dist-ssr
 *.local
+package-lock.json
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-<<<<<<< HEAD
 
 # private configuration
 .env
@@ -32,11 +33,3 @@ config.json
 # scripts
 user_create_script.sh
 start_all.sh
-=======
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
->>>>>>> f82a237 (feat: Major refactor)
