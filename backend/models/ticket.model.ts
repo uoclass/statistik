@@ -7,7 +7,6 @@ import {
   CreationOptional,
 } from "@sequelize/core";
 import { Attribute } from "@sequelize/core/decorators-legacy";
-import { MySqlDialect } from "@sequelize/mysql";
 
 // const sequelize = new Sequelize({ dialect: MySqlDialect });
 

@@ -1,13 +1,6 @@
-import {
-  Sequelize,
-  Model,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-} from "@sequelize/core";
-import { Attribute } from "@sequelize/core/decorators-legacy";
+import { Sequelize } from "@sequelize/core";
+import { hashSync } from "bcrypt-ts/browser";
 import { MySqlDialect } from "@sequelize/mysql";
-import { hashSync } from "bcrypt-ts";
 import dotenv from "dotenv";
 
 /* Models */
@@ -28,13 +21,12 @@ const sequelize = new Sequelize({
   logging: console.log,
 });
 
-// await sequelize.sync();
+/* Add test user */
 
-// /* Add test user */
-// const hashedPass = hashSync("test");
-// const testUser = await User.create({
-//   username: "test@test.edu",
-//   password: hashedPass,
-// });
+const hashedPass = hashSync("test");
+await User.create({
+  username: "test@test.edu",
+  password: hashedPass,
+});
 
 export default sequelize;
