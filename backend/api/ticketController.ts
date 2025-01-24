@@ -198,7 +198,7 @@ export default {
       res.status(500).send({ error: "Failed to fetch timestamp." });
       return;
     }
-    const timestamp = exampleTicket?.createdAt.toString();
+    const timestamp = exampleTicket?.createdAt.getTime();
 
     console.log(timestamp);
     res.status(200).send({ timestamp: timestamp });
