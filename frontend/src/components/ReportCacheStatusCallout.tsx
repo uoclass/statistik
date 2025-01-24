@@ -17,22 +17,21 @@ function formatUnixTime(unixTime) {
 
 function ReportCacheStatusCallout() {
   const token = useAuth();
-  const [reportCacheGenTime, setReportCacheGenTime] = useState(null);
-  const [refreshed, setRefreshedState] = useState(false);
+  const [reportCacheGenTime, setReportCacheGenTime] = useState("");
 
-  const refresh = () => {
+  const refreshReport = async () => {
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/refresh-report`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    setRefreshedState(true);
+
+    setTimeout(() => setReportCacheGenTime(""), 2000);
   };
 
-  // set up calling API to get time of report cache generation
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchRefreshTime() {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/tickets/report-cache-generation-time`,
         {
@@ -43,15 +42,16 @@ function ReportCacheStatusCallout() {
           },
         },
       );
-      if (!response.ok) {
-        setReportCacheGenTime(null);
-      } else {
-        const result = await response.json(); // Parse the JSON
-        setReportCacheGenTime(result.timestamp);
-      }
-    };
-    fetchData();
-  }, [token, refreshed]);
+
+      const result = await response.json();
+      console.log(result.timestamp);
+      return formatUnixTime(result.timestamp);
+    }
+
+    fetchRefreshTime().then((timestamp) => {
+      setReportCacheGenTime(timestamp ? timestamp : "");
+    });
+  }, [token, reportCacheGenTime]);
 
   return (
     <>
@@ -63,7 +63,7 @@ function ReportCacheStatusCallout() {
             Using ticket data as of <span className={"loading-text-box"} />
           </p>
         )}
-        <button className={"callout-button"} onClick={refresh}>
+        <button className={"callout-button"} onClick={refreshReport}>
           Refresh
         </button>
       </div>
