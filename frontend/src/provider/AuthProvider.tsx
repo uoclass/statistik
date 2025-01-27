@@ -2,7 +2,13 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 // create empty context object to share authentication state between components
-const AuthContext = createContext("");
+
+interface AuthContextProps {
+  token: string | null;
+  setToken: (arg1: string) => void;
+}
+
+const AuthContext = createContext({} as AuthContextProps);
 
 interface AuthProviderChildren {
   children: React.ReactNode;
