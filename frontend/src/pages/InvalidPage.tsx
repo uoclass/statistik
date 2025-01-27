@@ -19,7 +19,7 @@ function InvalidPage() {
     <div>
       <h1>Invalid Page</h1>
       <p>
-        You attempted to access a page that requires authentication. Please use
+        You attempted to access a page which is not available to you. Please use
         the navigation bar to visit your desired page.
       </p>
     </div>
