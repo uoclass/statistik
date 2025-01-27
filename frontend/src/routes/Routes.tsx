@@ -7,8 +7,8 @@
  */
 
 import { createBrowserRouter } from "react-router-dom";
-import { useAuth } from "../provider/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { AnonymousRoute } from "./AnonymousRoute";
 
 import LandingPage from "../pages/LandingPage";
 import AboutPage from "../pages/AboutPage";
@@ -22,13 +22,9 @@ import ViewCreationPage from "../pages/ViewCreationPage";
 import Layout from "../components/Layout";
 
 function Routes() {
-  const { token } = useAuth();
-
   // route configurations go here
-
   const routesHidden = [
     {
-      path: "/",
       element: <ProtectedRoute />,
       children: [
         {
@@ -53,8 +49,13 @@ function Routes() {
 
   const routesUnauthenticatedOnly = [
     {
-      path: "/login",
-      element: <LoginPage />,
+      element: <AnonymousRoute />,
+      children: [
+        {
+          path: "/login",
+          element: <LoginPage />,
+        },
+      ],
     },
   ];
 
@@ -76,10 +77,6 @@ function Routes() {
       element: <InvalidPage />,
     },
     {
-      path: "/login",
-      element: <NotFoundPage />,
-    },
-    {
       path: "*",
       element: <NotFoundPage />,
     },
@@ -90,15 +87,13 @@ function Routes() {
     {
       element: <Layout />,
       children: [
-        // we use the ... operator to combine these arrays into one
-        ...(!token ? routesUnauthenticatedOnly : []),
         ...routesPublic,
+        ...routesUnauthenticatedOnly,
         ...routesHidden,
       ],
     },
   ]);
 
-  // provide configuration using RouterProvider
   return router;
 }
 
