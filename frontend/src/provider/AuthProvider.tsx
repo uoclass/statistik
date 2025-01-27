@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 // create empty context object to share authentication state between components
 const AuthContext = createContext("");
@@ -10,7 +10,7 @@ interface AuthProviderChildren {
 /* Component providing an authentication context.
  * The children prop represents components with access to the authentication context.
  */
-const AuthProvider: React.FC<AuthProviderChildren> = ({ children }) => {
+const AuthProvider = ({ children }: AuthProviderChildren) => {
   // retrieve token from local storage if exists
   const [token, setTokenState] = useState(localStorage.getItem("token"));
 
