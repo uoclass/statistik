@@ -6,7 +6,6 @@
 }
 
 p {
-    font-size: 1rem;
     font-family: "Helvetica Neue", sans-serif;
     font-weight: normal;
     color: black;
@@ -23,7 +22,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 
 .form-select, .form-input-date {
-  font-size: 1rem;
   font-family: "Helvetica Neue", sans-serif;
   font-weight: normal;
   color: black;

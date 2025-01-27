@@ -1,12 +1,15 @@
 // import GeneratedView from "../components/GeneratedView";
-import ConfigurationMenu from "../components/ConfigurationMenu";
+import ReportCacheStatusCallout from "../components/ReportCacheStatusCallout";
+import ViewCreationForm from "../components/ViewCreationForm";
 
 // A layout defines a set of parameters
 function ViewCreationPage() {
   return (
     // <GeneratedView config={config} data={data} />
     <>
-      <ConfigurationMenu />
+        <h3>Create a new view</h3>
+        <ReportCacheStatusCallout />
+        <ViewCreationForm />
     </>
   );
 }
