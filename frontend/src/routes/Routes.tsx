@@ -6,7 +6,7 @@
  * Defines routes for the app.
  */
 
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { useAuth } from "../provider/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -22,7 +22,7 @@ import ViewCreationPage from "../pages/ViewCreationPage";
 import Layout from "../components/Layout";
 
 function Routes() {
-  const token = useAuth();
+  const { token } = useAuth();
 
   // route configurations go here
 

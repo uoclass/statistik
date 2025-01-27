@@ -2,7 +2,7 @@ import { useAuth } from "../provider/AuthProvider";
 import { useEffect, useState } from "react";
 import "./Callout.css";
 
-function formatUnixTime(unixTime) {
+function formatUnixTime(unixTime: number) {
   const date = new Date(unixTime);
   const options = {
     year: "numeric",
@@ -25,9 +25,9 @@ function ReportCacheStatusCallout() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    }).then(() => {
+      setReportCacheGenTime("");
     });
-
-    setTimeout(() => setReportCacheGenTime(""), 2000);
   };
 
   useEffect(() => {
