@@ -26,7 +26,7 @@ function Routes() {
 
   // route configurations go here
 
-  const routesHidden = [
+  const routesProtected = [
     {
       path: "/",
       element: <ProtectedRoute />,
@@ -51,13 +51,6 @@ function Routes() {
     },
   ];
 
-  const routesUnauthenticatedOnly = [
-    {
-      path: "/login",
-      element: <LoginPage />,
-    },
-  ];
-
   const routesPublic = [
     {
       path: "/",
@@ -76,8 +69,14 @@ function Routes() {
       element: <InvalidPage />,
     },
     {
+      // special page with its own logic for kicking already-authenticated users
       path: "/login",
-      element: <NotFoundPage />,
+      element: <LoginPage />,
+    },
+    {
+      // special page with its own logic for kicking non-authenticated users
+      path: "/logout",
+      element: <LogoutPage />,
     },
     {
       path: "*",
@@ -91,12 +90,14 @@ function Routes() {
       element: <Layout />,
       children: [
         // we use the ... operator to combine these arrays into one
-        ...(!token ? routesUnauthenticatedOnly : []),
+        ...routesProtected,
         ...routesPublic,
-        ...routesHidden,
       ],
     },
   ]);
+
+  // console.log("Routes: Token " + (token ? "is" : "is NOT") + "present, token value is ", token);
+  // console.log("Routes: Routes " + (token ? "NOT" : "") + "including routesUnauthenticatedOnly in router");
 
   // provide configuration using RouterProvider
   return router;
