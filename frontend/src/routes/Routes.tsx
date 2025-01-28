@@ -7,8 +7,8 @@
  */
 
 import { createBrowserRouter } from "react-router-dom";
-import { useAuth } from "../provider/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { AnonymousRoute } from "./AnonymousRoute";
 
 import LandingPage from "../pages/LandingPage";
 import AboutPage from "../pages/AboutPage";
@@ -22,13 +22,9 @@ import ViewCreationPage from "../pages/ViewCreationPage";
 import Layout from "../components/Layout";
 
 function Routes() {
-  const { token } = useAuth();
-
   // route configurations go here
-
-  const routesProtected = [
+  const routesHidden = [
     {
-      path: "/",
       element: <ProtectedRoute />,
       children: [
         {
@@ -46,6 +42,18 @@ function Routes() {
         {
           path: "/new-view",
           element: <ViewCreationPage />,
+        },
+      ],
+    },
+  ];
+
+  const routesUnauthenticatedOnly = [
+    {
+      element: <AnonymousRoute />,
+      children: [
+        {
+          path: "/login",
+          element: <LoginPage />,
         },
       ],
     },
@@ -69,16 +77,6 @@ function Routes() {
       element: <InvalidPage />,
     },
     {
-      // special page with its own logic for kicking already-authenticated users
-      path: "/login",
-      element: <LoginPage />,
-    },
-    {
-      // special page with its own logic for kicking non-authenticated users
-      path: "/logout",
-      element: <LogoutPage />,
-    },
-    {
       path: "*",
       element: <NotFoundPage />,
     },
@@ -89,17 +87,13 @@ function Routes() {
     {
       element: <Layout />,
       children: [
-        // we use the ... operator to combine these arrays into one
-        ...routesProtected,
         ...routesPublic,
+        ...routesUnauthenticatedOnly,
+        ...routesHidden,
       ],
     },
   ]);
 
-  // console.log("Routes: Token " + (token ? "is" : "is NOT") + "present, token value is ", token);
-  // console.log("Routes: Routes " + (token ? "NOT" : "") + "including routesUnauthenticatedOnly in router");
-
-  // provide configuration using RouterProvider
   return router;
 }
 

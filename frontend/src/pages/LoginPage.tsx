@@ -90,7 +90,6 @@ function LoginPage() {
       .then((response) => {
         if (response.ok) {
           console.log("Successful login.");
-          navigate("/dashboard");
         } else {
           window.alert("Login failed.");
         }
@@ -100,6 +99,7 @@ function LoginPage() {
         // the login was successful
         if (!data.error) {
           setToken(data.token);
+          navigate("/dashboard");
         }
       })
       .catch((error) => {

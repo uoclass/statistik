@@ -1,8 +1,10 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../provider/AuthProvider";
 import "./Nav.css";
 
 function Nav() {
+  const { token } = useAuth();
+
   return (
     <nav className="Nav">
       <ul className="Nav-list">
@@ -22,7 +24,11 @@ function Nav() {
           <NavLink to="/about">about</NavLink>
         </li>
         <li>
-          <NavLink to="/login">sign in</NavLink>
+          {!token ? (
+            <NavLink to="/login">sign in</NavLink>
+          ) : (
+            <NavLink to="/logout">sign out</NavLink>
+          )}
         </li>
       </ul>
     </nav>

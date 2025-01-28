@@ -22,13 +22,13 @@ function LogoutPage() {
 
   // FIXME use login tutorial to implement logout functionality
   const handleLogout = () => {
-    setToken();
-    navigate("/", { replace: true });
+    setToken("");
+    navigate("/notapage");
   };
 
   setTimeout(() => {
     handleLogout();
-  }, 1 * 1000);
+  }, 3 * 1000);
 
   return (
     <div>
