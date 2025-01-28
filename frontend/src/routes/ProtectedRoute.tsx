@@ -11,16 +11,14 @@ import { useAuth } from "../provider/AuthProvider";
 export const ProtectedRoute = () => {
   const { token } = useAuth();
 
-  console.log("in protected route, value of token is ", token);
-
   // check if user is authenticated
   if (!token) {
     // not authenticated, go back to login page
-    console.log("User is not authenticated, redirecting by protected route");
+    console.log("ProtectedRoute: tried to access but unauthorized, rerouting to invalid, token is ", token);
     return <Navigate to="/invalid" />;
   }
 
   // render the child routes
-  console.log("User is authenticated, rendering outlet");
+  console.log("ProtectedRoute: authenticated, forwarding to outlet, token is ", token);
   return <Outlet />;
 };
