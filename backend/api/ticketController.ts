@@ -28,45 +28,48 @@ interface TicketFilter {
   matchAllDiagnoses?: boolean;
 }
 
+function ValidateTicketFilter(filter: TicketFilter) {}
+
 function TicketFieldsAsFilter(
   filter: TicketFilter,
 ): WhereAttributeHash<TicketFieldsType> {
   const formattedFilter: WhereAttributeHash = {};
 
   if (filter.termStart) {
-    formattedFilter["jsonAttribute.termStart"] = { [Op.gte]: filter.termStart };
+    formattedFilter["termStart"] = { [Op.gte]: filter.termStart };
   }
   if (filter.termEnd) {
-    formattedFilter["jsonAttribute.termEnd"] = { [Op.lte]: filter.termEnd };
+    formattedFilter["termEnd"] = { [Op.lte]: filter.termEnd };
   }
   if (filter.building) {
-    formattedFilter["jsonAttribute.building"] = { [Op.in]: filter.building };
+    formattedFilter["location"] = { [Op.in]: filter.building };
   }
   if (filter.room) {
-    formattedFilter["jsonAttribute.room"] = { [Op.eq]: filter.room };
+    formattedFilter["room"] = { [Op.eq]: filter.room };
   }
   if (filter.requestor) {
-    formattedFilter["jsonAttribute.requestor"] = { [Op.in]: filter.requestor };
+    formattedFilter["requestor"] = { [Op.in]: filter.requestor };
   }
   if (filter.titleSubstring) {
-    formattedFilter["jsonAttribute.title"] = {
+    formattedFilter["title"] = {
       [Op.like]: `%${filter.titleSubstring}%`,
     };
   }
   if (filter.diagnoses) {
     if (filter.matchAllDiagnoses) {
       // Use AND logic for matching all diagnoses
-      formattedFilter["jsonAttribute.diagnoses"] = {
+      formattedFilter["diagnoses"] = {
         [Op.and]: filter.diagnoses.map((diag) => ({ [Op.eq]: diag })),
       };
     } else {
       // Use OR logic for matching any diagnosis
-      formattedFilter["jsonAttribute.diagnoses"] = {
+      formattedFilter["diagnoses"] = {
         [Op.or]: filter.diagnoses.map((diag) => ({ [Op.eq]: diag })),
       };
     }
   }
 
+  console.log(formattedFilter);
   return formattedFilter;
 }
 
@@ -131,18 +134,32 @@ async function _fetchNewTicketReport() {
   return report;
 }
 
+(() => {
+  const filter: TicketFilter = {
+    layout: "chart",
+    grouping: "building",
+    building: ["Lillis Business Complex", "Willamette Hall"],
+  };
+
+  Ticket.findAll({
+    where: {
+      data: TicketFieldsAsFilter(filter),
+    },
+  }).then((data) => console.log(data));
+})();
+
 export default {
   // TODO -- IN PROGRESS
   fetchFilteredTickets: async (req: Request, res: Response) => {
     const filter: TicketFilter = req.body!.filter;
 
-    Ticket.findAll({
+    const data = Ticket.findAll({
       where: {
         data: TicketFieldsAsFilter(filter),
       },
     });
 
-    res.status(200).send();
+    res.json(data).status(200).send();
     return;
   },
   fetchNewTicketReport: async (req: Request, res: Response) => {
