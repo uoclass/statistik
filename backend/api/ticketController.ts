@@ -20,57 +20,63 @@ interface TicketFilter {
   // filters
   termStart?: string;
   termEnd?: string;
-  building?: string[];
+  building?: Array<string>;
   room?: string;
-  requestor?: string[];
+  requestor?: Array<string>;
   titleSubstring?: string;
-  diagnoses?: string[];
+  diagnoses?: Array<string>;
   matchAllDiagnoses?: boolean;
 }
 
-function ValidateTicketFilter(filter: TicketFilter) {}
+function ValidateTicketFilter(filter: TicketFilter) {
+  return;
+}
 
-function TicketFieldsAsFilter(
-  filter: TicketFilter,
-): WhereAttributeHash<TicketFieldsType> {
-  const formattedFilter: WhereAttributeHash = {};
+function TicketFieldsAsFilter(filter: TicketFilter) {
+  const whereClause: any = {};
+
+  if (!filter) {
+    console.log("Empty filter.");
+    return whereClause;
+  }
 
   if (filter.termStart) {
-    formattedFilter["termStart"] = { [Op.gte]: filter.termStart };
+    whereClause["created"] = { [Op.gte]: filter.termStart };
   }
+
   if (filter.termEnd) {
-    formattedFilter["termEnd"] = { [Op.lte]: filter.termEnd };
+    whereClause["created"] = { [Op.lte]: filter.termEnd };
   }
+
   if (filter.building) {
-    formattedFilter["location"] = { [Op.in]: filter.building };
+    whereClause["location"] = filter.building;
   }
+
   if (filter.room) {
-    formattedFilter["room"] = { [Op.eq]: filter.room };
+    whereClause["room"] = filter.room;
   }
-  if (filter.requestor) {
-    formattedFilter["requestor"] = { [Op.in]: filter.requestor };
+
+  if (filter.requestor && filter.requestor.length > 0) {
+    whereClause["requestor"] = { [Op.in]: filter.requestor };
   }
-  if (filter.titleSubstring) {
-    formattedFilter["title"] = {
-      [Op.like]: `%${filter.titleSubstring}%`,
-    };
-  }
-  if (filter.diagnoses) {
+
+  if (filter.diagnoses && filter.diagnoses.length > 0) {
     if (filter.matchAllDiagnoses) {
-      // Use AND logic for matching all diagnoses
-      formattedFilter["diagnoses"] = {
-        [Op.and]: filter.diagnoses.map((diag) => ({ [Op.eq]: diag })),
-      };
+      // if matchAllDiagnoses is true, ensure all diagnoses are present
+      whereClause["diagnoses"] = { [Op.contains]: filter.diagnoses };
     } else {
-      // Use OR logic for matching any diagnosis
-      formattedFilter["diagnoses"] = {
-        [Op.or]: filter.diagnoses.map((diag) => ({ [Op.eq]: diag })),
-      };
+      // if matchAllDiagnoses is false, match any of the diagnoses
+      whereClause["diagnoses"] = { [Op.overlap]: filter.diagnoses };
     }
   }
 
-  console.log(formattedFilter);
-  return formattedFilter;
+  if (filter.titleSubstring) {
+    whereClause["title"] = {
+      [Op.iLike]: `%${filter.titleSubstring}%`,
+    };
+  }
+
+  return whereClause;
 }
 
 /*
@@ -145,20 +151,28 @@ async function _fetchNewTicketReport() {
     where: {
       data: TicketFieldsAsFilter(filter),
     },
-  }).then((data) => console.log(data));
+  }).then((result) => console.log(result.map((r) => r.get({ plain: true }))));
 })();
 
 export default {
   // TODO -- IN PROGRESS
   fetchFilteredTickets: async (req: Request, res: Response) => {
     const filter: TicketFilter = req.body!.filter;
+    const formattedFilter = TicketFieldsAsFilter(filter);
+    console.log("Filter / FormattedFilter");
+    console.log(filter);
+    console.log(formattedFilter);
 
-    const data = Ticket.findAll({
+    const data = await Ticket.findAll({
       where: {
-        data: TicketFieldsAsFilter(filter),
+        data: formattedFilter,
       },
+      attributes: ["data"],
+    }).then((result) => {
+      return result.map((r) => r.get({ plain: true }));
     });
 
+    //console.log(data);
     res.json(data).status(200).send();
     return;
   },
