@@ -6,9 +6,8 @@
  * Defines routes for the app.
  */
 
-import { createBrowserRouter } from "react-router-dom";
-import { ProtectedRoute } from "./ProtectedRoute";
-import { AnonymousRoute } from "./AnonymousRoute";
+import {createBrowserRouter} from "react-router-dom";
+import {ProtectedRoute} from "./ProtectedRoute";
 
 import LandingPage from "../pages/LandingPage";
 import AboutPage from "../pages/AboutPage";
@@ -20,81 +19,74 @@ import InvalidPage from "../pages/InvalidPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ViewCreationPage from "../pages/ViewCreationPage";
 import Layout from "../components/Layout";
+import ConditionalRoute from "./ConditionalRoute";
 
 function Routes() {
-  // route configurations go here
-  const routesHidden = [
-    {
-      element: <ProtectedRoute />,
-      children: [
-        {
-          path: "/",
-          element: <UserDashboardPage />,
-        },
-        {
-          path: "/dashboard",
-          element: <UserDashboardPage />,
-        },
-        {
-          path: "/logout",
-          element: <LogoutPage />,
-        },
-        {
-          path: "/new-view",
-          element: <ViewCreationPage />,
-        },
-      ],
-    },
-  ];
+	// route configurations go here
+	const routesProtected = [
+		{
+			element: <ProtectedRoute/>,
+			children: [
+				{
+					path: "/dashboard",
+					element: <UserDashboardPage/>,
+				},
+				{
+					path: "/new-view",
+					element: <ViewCreationPage/>,
+				},
+			],
+		},
+	];
 
-  const routesUnauthenticatedOnly = [
-    {
-      element: <AnonymousRoute />,
-      children: [
-        {
-          path: "/login",
-          element: <LoginPage />,
+	const routesPublic = [
+		{
+			element: <ConditionalRoute redirect={"/dashboard"} redirectOnAuthenticated={true} />,
+			children: [
+				{
+					path: "/",
+					element: <LandingPage />
+				}
+			]
+		},
+		{
+			path: "/about",
+			element: <AboutPage/>,
+		},
+		{
+			path: "/ipsum",
+			element: <IpsumPage/>,
         },
-      ],
-    },
-  ];
+		{
+			path: "/invalid",
+			element: <InvalidPage/>,
+		},
+		{
+			path: "/login",
+			element: <LoginPage/>,
+		},
+		{
+			path: "/logout",
+			element: <LogoutPage/>,
+		},
+		{
+			path: "*",
+			element: <NotFoundPage/>,
+		},
+	];
 
-  const routesPublic = [
-    {
-      path: "/",
-      element: <LandingPage />,
-    },
-    {
-      path: "/about",
-      element: <AboutPage />,
-    },
-    {
-      path: "/ipsum",
-      element: <IpsumPage />,
-    },
-    {
-      path: "/invalid",
-      element: <InvalidPage />,
-    },
-    {
-      path: "*",
-      element: <NotFoundPage />,
-    },
-  ];
+	// decide which routes are available to user based on authentication status
+	const router = createBrowserRouter([
+		{
+			element: <Layout/>,
+			children: [
+				...routesPublic,
+				...routesProtected,
+			],
+		},
+	]);
 
-  // decide which routes are available to user based on authentication status
-  const router = createBrowserRouter([
-    {
-      element: <Layout />,
-      children: [
-        ...routesPublic,
-        ...routesUnauthenticatedOnly,
-        ...routesHidden,
-      ],
-    },
-  ]);
-
-  return router;
+	return router;
 }
 
 export default Routes;

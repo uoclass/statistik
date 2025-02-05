@@ -8,37 +8,46 @@
  */
 
 // Packages
-import { useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 
 // Styles
 
-import { useAuth } from "../provider/AuthProvider";
+import {useAuth} from "../provider/AuthProvider";
+import {useEffect} from "react";
 
 function LogoutPage() {
-  /* This component displays the logout page.
-   */
-  const { setToken } = useAuth();
-  const navigate = useNavigate();
+	/* This component displays the logout page.
+	 */
+	const { token, setToken} = useAuth();
+	const navigate = useNavigate();
 
-  // FIXME use login tutorial to implement logout functionality
-  const handleLogout = () => {
-    setToken("");
-    navigate("/notapage");
-  };
+    if (!token) {
+		// kick users who are not authenticated
+		return <Navigate to={"/invalid"} />;
+    }
 
-  setTimeout(() => {
-    handleLogout();
-  }, 3 * 1000);
+	useEffect(() => {
+		const handleLogout = () => {
+			setToken("");
+			navigate("/");
+		}
 
-  return (
-    <div>
-      <h1>Logout Page</h1>
-      <p>
-        This is the logout page, which should only be visible to authenticated
-        users and immediately redirects them to the landing page.
-      </p>
-    </div>
-  );
+		if (token) {
+			setTimeout(() => {
+				handleLogout();
+			}, 3000);
+		}
+	}, [])
+
+	return (
+		<div>
+			<h1>Logout Page</h1>
+			<p>
+				This is the logout page, which should only be visible to authenticated
+				users and immediately redirects them to the landing page.
+			</p>
+		</div>
+	);
 }
 
 export default LogoutPage;
