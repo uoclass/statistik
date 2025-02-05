@@ -5,8 +5,12 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  NonAttribute,
+  BelongsToManySetAssociationsMixin,
 } from "@sequelize/core";
-import { Attribute } from "@sequelize/core/decorators-legacy";
+import { Attribute, BelongsToMany } from "@sequelize/core/decorators-legacy";
+
+import { Diagnosis } from "./diagnosis.model.ts";
 
 // const sequelize = new Sequelize({ dialect: MySqlDialect });
 
@@ -30,8 +34,49 @@ export class Ticket extends Model<
   InferAttributes<Ticket>,
   InferCreationAttributes<Ticket>
 > {
-  @Attribute(DataTypes.JSON)
-  declare data: TicketFields | null;
+  @Attribute(DataTypes.STRING)
+  declare ticket_id: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare title: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare assigned_to: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare requestor: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare email: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare department: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare location: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare room: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare created: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare modified: string | null;
+
+  @Attribute(DataTypes.STRING)
+  declare status: string | null;
+
+  @BelongsToMany(() => Diagnosis, {
+    through: "MarkedDiagnoses",
+  })
+  declare diagnoses: NonAttribute<Diagnosis[]>;
+
+  declare setDiagnoses: BelongsToManySetAssociationsMixin<
+    Diagnosis,
+    /* this is the type of the primary key of the target */
+    Diagnosis["id"]
+  >;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;

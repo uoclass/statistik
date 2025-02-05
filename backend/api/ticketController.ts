@@ -1,4 +1,5 @@
 import { Ticket, TicketFieldsType } from "../models/ticket.model.ts";
+import { Diagnosis } from "models/diagnosis.model.ts";
 import sequelize from "../database.ts";
 import dotenv from "dotenv";
 import { Op } from "@sequelize/core";
@@ -148,9 +149,7 @@ async function _fetchNewTicketReport() {
   };
 
   Ticket.findAll({
-    where: {
-      data: TicketFieldsAsFilter(filter),
-    },
+    where: TicketFieldsAsFilter(filter),
   }).then((result) => console.log(result.map((r) => r.get({ plain: true }))));
 })();
 
@@ -164,10 +163,7 @@ export default {
     console.log(formattedFilter);
 
     const data = await Ticket.findAll({
-      where: {
-        data: formattedFilter,
-      },
-      attributes: ["data"],
+      where: formattedFilter,
     }).then((result) => {
       return result.map((r) => r.get({ plain: true }));
     });
@@ -192,28 +188,35 @@ export default {
 
     const { DataRows, DisplayedColumns } = data;
 
-    await Ticket.truncate().then((result) => console.log(result));
+    await Ticket.destroy({ where: {} }).then((result) => console.log(result));
 
     // iterate through each row in the DataRows array
     for (let i = 0; i < DataRows.length; i++) {
       const row = DataRows[i];
-      await Ticket.create({
-        data: {
-          ticket_id: row.TicketID,
-          title: row.Title,
-          assigned_to: row.ResponsibleGroupName,
-          requestor: row.CustomerName,
-          email: row.ContactEmail,
-          department: row.AccountName,
-          location: row.LocationName,
-          room: row.LocationRoomName,
-          created: row.CreatedDate,
-          modified: row.LastModifiedDate,
-          status: row.StatusName,
-          diagnoses: row["132559"] ? row["132559"].split(", ") : [], // NOTE -> This corresponds to the "diagnosis" header. Could refactor to read from { DisplayedColumns }
-        } satisfies TicketFieldsType,
+      const ticket = await Ticket.create({
+        ticket_id: row.TicketID.toString(),
+        title: row.Title,
+        assigned_to: row.ResponsibleGroupName,
+        requestor: row.CustomerName,
+        email: row.ContactEmail,
+        department: row.AccountName,
+        location: row.LocationName,
+        room: row.LocationRoomName,
+        created: row.CreatedDate,
+        modified: row.LastModifiedDate,
+        status: row.StatusName,
       });
+
+      const diagnosisList = row["132559"] || "";
+      const d = await Diagnosis.findAll({
+        where: {
+          value: diagnosisList.split(", "),
+        },
+      });
+
+      await ticket.setDiagnoses(d);
     }
+
     const message = { message: "Completed report cache refresh." };
 
     console.log(message.message);
