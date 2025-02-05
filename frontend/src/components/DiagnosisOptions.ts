@@ -1,0 +1,37 @@
+export const diagnosisOptions = [
+  { value: "HyFlex/Room Camera", label: "HyFlex/Room Camera" },
+  { value: "Blu-Ray/DVD Player", label: "Blu-ray Player" },
+  { value: "Touch Panel", label: "Touch Panel" },
+  { value: "Document Camera", label: "Document Camera" },
+  { value: "Cable--HDMI", label: "HDMI Cable" },
+  { value: "Cable-Ethernet", label: "Ethernet Cable" },
+  {
+    value: "Cable-Other (describe below)",
+    label: "Other Cable",
+  },
+  { value: "Microphone", label: "Microphone" },
+  { value: "Assistive Listening Device", label: "Assistive Listening Device" },
+  { value: "Projector", label: "Projector" },
+  { value: "Tech Tour", label: "Tech Tour" },
+  { value: "TV Display", label: "TV Display" },
+  { value: "Transmitter/Receiver", label: "Transmitter/Receiver" },
+  { value: "DM Controller", label: "DM Controller" },
+  { value: "Scaler", label: "Scaler" },
+  { value: "Network Switch", label: "Network Switch" },
+  {
+    value: "Power Strip/Surge Protector",
+    label: "Power Strip/Surge Protector",
+  },
+  { value: "User Error", label: "User Error" },
+  {
+    value: "Not a Classroom Support Issue",
+    label: "Not a Classroom Support Issue",
+  },
+  { value: "Spam Call", label: "Spam Call" },
+  { value: "Adapter loan", label: "Adapter loan" },
+  { value: "Equipment Request", label: "Equipment Request" },
+  {
+    value: "Other (provide description below)",
+    label: "Other",
+  },
+];
