@@ -21,11 +21,11 @@ interface TicketFilter {
   // filters
   termStart?: string;
   termEnd?: string;
-  building?: Array<string>;
+  building?: string;
   room?: string;
-  requestor?: Array<string>;
+  requestor?: string;
   titleSubstring?: string;
-  diagnoses?: Array<string>;
+  diagnoses?: Array<{ value: string; label: string }>;
   matchAllDiagnoses?: boolean;
 }
 
@@ -33,51 +33,43 @@ function ValidateTicketFilter(filter: TicketFilter) {
   return;
 }
 
-function TicketFieldsAsFilter(filter: TicketFilter) {
-  const whereClause: any = {};
-
-  if (!filter) {
-    console.log("Empty filter.");
-    return whereClause;
+async function getFilteredTickets(filter: TicketFilter) {
+  let reformedDiagnoses = new Array<string>();
+  if (filter.diagnoses) {
+    reformedDiagnoses = filter.diagnoses.map((pair) => pair.value);
   }
 
-  if (filter.termStart) {
-    whereClause["created"] = { [Op.gte]: filter.termStart };
-  }
-
-  if (filter.termEnd) {
-    whereClause["created"] = { [Op.lte]: filter.termEnd };
-  }
-
-  if (filter.building) {
-    whereClause["location"] = filter.building;
-  }
-
-  if (filter.room) {
-    whereClause["room"] = filter.room;
-  }
-
-  if (filter.requestor && filter.requestor.length > 0) {
-    whereClause["requestor"] = { [Op.in]: filter.requestor };
-  }
-
-  if (filter.diagnoses && filter.diagnoses.length > 0) {
-    if (filter.matchAllDiagnoses) {
-      // if matchAllDiagnoses is true, ensure all diagnoses are present
-      whereClause["diagnoses"] = { [Op.contains]: filter.diagnoses };
-    } else {
-      // if matchAllDiagnoses is false, match any of the diagnoses
-      whereClause["diagnoses"] = { [Op.overlap]: filter.diagnoses };
-    }
-  }
-
-  if (filter.titleSubstring) {
-    whereClause["title"] = {
-      [Op.iLike]: `%${filter.titleSubstring}%`,
-    };
-  }
-
-  return whereClause;
+  return await Ticket.findAll({
+    where: {
+      created: {
+        [Op.gte]: filter.termStart || new Date("1970-01-01"),
+        [Op.lte]: filter.termEnd || new Date(),
+      },
+      ...(filter.building && {
+        location: { [Op.in]: filter.building!.split(", ") },
+      }),
+      ...(filter.room && { room: { [Op.eq]: filter.room } }),
+      ...(filter.requestor && {
+        requestor: { [Op.in]: filter.requestor!.split(", ") },
+      }),
+      ...(filter.titleSubstring && {
+        title: { [Op.iLike]: `%${filter.titleSubstring}%` },
+      }),
+    },
+    include: [
+      {
+        association: "diagnoses",
+        ...(filter.diagnoses &&
+          filter.diagnoses.length > 0 && {
+            where: {
+              value: {
+                [Op.in]: reformedDiagnoses,
+              },
+            },
+          }),
+      },
+    ],
+  });
 }
 
 /*
@@ -141,35 +133,29 @@ async function _fetchNewTicketReport() {
   return report;
 }
 
-(() => {
-  const filter: TicketFilter = {
-    layout: "chart",
-    grouping: "building",
-    building: ["Lillis Business Complex", "Willamette Hall"],
-  };
+// (() => {
+//   const filter: TicketFilter = {
+//     layout: "chart",
+//     grouping: "building",
+//     building: "Lillis Business Complex, Willamette Hall",
+//   };
 
-  Ticket.findAll({
-    where: TicketFieldsAsFilter(filter),
-  }).then((result) => console.log(result.map((r) => r.get({ plain: true }))));
-})();
+//   getFilteredTickets(filter).then((result) =>
+//     console.log(result.map((r) => r.get({ plain: true }))),
+//   );
+// })();
 
 export default {
   // TODO -- IN PROGRESS
   fetchFilteredTickets: async (req: Request, res: Response) => {
     const filter: TicketFilter = req.body!.filter;
-    const formattedFilter = TicketFieldsAsFilter(filter);
-    console.log("Filter / FormattedFilter");
     console.log(filter);
-    console.log(formattedFilter);
+    const data = await getFilteredTickets(filter);
 
-    const data = await Ticket.findAll({
-      where: formattedFilter,
-    }).then((result) => {
-      return result.map((r) => r.get({ plain: true }));
-    });
+    const formattedData = data.map((r) => r.get({ plain: true }));
 
-    //console.log(data);
-    res.json(data).status(200).send();
+    // console.log(formattedData);
+    res.json(formattedData).status(200).send();
     return;
   },
   fetchNewTicketReport: async (req: Request, res: Response) => {
@@ -202,8 +188,8 @@ export default {
         department: row.AccountName,
         location: row.LocationName,
         room: row.LocationRoomName,
-        created: row.CreatedDate,
-        modified: row.LastModifiedDate,
+        created: new Date(row.CreatedDate),
+        modified: new Date(row.LastModifiedDate),
         status: row.StatusName,
       });
 

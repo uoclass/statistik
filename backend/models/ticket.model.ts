@@ -7,6 +7,7 @@ import {
   CreationOptional,
   NonAttribute,
   BelongsToManySetAssociationsMixin,
+  BelongsToManyGetAssociationsMixin,
 } from "@sequelize/core";
 import { Attribute, BelongsToMany } from "@sequelize/core/decorators-legacy";
 
@@ -58,11 +59,11 @@ export class Ticket extends Model<
   @Attribute(DataTypes.STRING)
   declare room: string | null;
 
-  @Attribute(DataTypes.STRING)
-  declare created: string | null;
+  @Attribute(DataTypes.DATE)
+  declare created: Date | null;
 
-  @Attribute(DataTypes.STRING)
-  declare modified: string | null;
+  @Attribute(DataTypes.DATE)
+  declare modified: Date | null;
 
   @Attribute(DataTypes.STRING)
   declare status: string | null;
@@ -74,9 +75,10 @@ export class Ticket extends Model<
 
   declare setDiagnoses: BelongsToManySetAssociationsMixin<
     Diagnosis,
-    /* this is the type of the primary key of the target */
     Diagnosis["id"]
   >;
+
+  declare getDiagnoses: BelongsToManyGetAssociationsMixin<Diagnosis>;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
