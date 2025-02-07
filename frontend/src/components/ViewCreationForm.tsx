@@ -13,7 +13,7 @@ export interface IFormInputs {
   building?: string | null;
   room?: string | null;
   requestor?: Array<string> | null;
-  diagnoses?: Array<string> | null;
+  diagnoses?: Array<{ value: string; label: string }> | Array<string> | null;
   titleSubstring?: string | null;
   matchAllDiagnoses?: boolean | null;
 }
