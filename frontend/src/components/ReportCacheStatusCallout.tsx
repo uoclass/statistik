@@ -57,7 +57,9 @@ function ReportCacheStatusCallout() {
     <>
       <div className="grey-callout-box" id="report-cache-gen-time-box">
         {reportCacheGenTime ? (
-          <p>Using ticket data as of {reportCacheGenTime}</p>
+          <p>
+            Using ticket data as of <strong>{reportCacheGenTime}</strong>
+          </p>
         ) : (
           <p>
             Using ticket data as of <span className={"loading-text-box"} />
