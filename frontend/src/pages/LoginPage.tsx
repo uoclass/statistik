@@ -24,7 +24,7 @@ function LoginPage() {
 
 	if (token) {
 		// kick users who are already authenticated
-		return <Navigate to={"/invalid"} />;
+		return <Navigate to={"/dashboard"} />;
 	}
 
 	const onButtonClick = (event: any) => {
@@ -103,7 +103,7 @@ function LoginPage() {
 				// the login was successful
 				if (!data.error) {
 					setToken(data.token);
-					navigate("/about");
+					setTimeout(() => {navigate("/dashboard")}, 500);
 				}
 			})
 			.catch((error) => {
