@@ -2,9 +2,8 @@ import { Ticket, TicketFieldsType } from "../models/ticket.model.ts";
 import { Diagnosis } from "models/diagnosis.model.ts";
 import sequelize from "../database.ts";
 import dotenv from "dotenv";
-import { Op } from "@sequelize/core";
+import { Op, QueryTypes } from "@sequelize/core";
 import { Request, Response } from "express";
-import { WhereAttributeHash } from "@sequelize/core/_non-semver-use-at-your-own-risk_/abstract-dialect/where-sql-builder-types.js";
 
 dotenv.config({ path: "../.env.local" });
 
@@ -21,11 +20,11 @@ interface TicketFilter {
   // filters
   termStart?: string;
   termEnd?: string;
-  building?: string;
+  building: Array<{ value: string; label: string }>;
+  requestor: Array<{ value: string; label: string }>;
+  diagnoses: Array<{ value: string; label: string }>;
   room?: string;
-  requestor?: string;
   titleSubstring?: string;
-  diagnoses?: Array<{ value: string; label: string }>;
   matchAllDiagnoses?: boolean;
 }
 
@@ -45,12 +44,12 @@ async function getFilteredTickets(filter: TicketFilter) {
         [Op.gte]: filter.termStart || new Date("1970-01-01"),
         [Op.lte]: filter.termEnd || new Date(),
       },
-      ...(filter.building && {
-        location: { [Op.in]: filter.building!.split(", ") },
+      ...(filter.building.length > 0 && {
+        location: { [Op.in]: filter.building!.map((pair) => pair.value) },
       }),
       ...(filter.room && { room: { [Op.eq]: filter.room } }),
-      ...(filter.requestor && {
-        requestor: { [Op.in]: filter.requestor!.split(", ") },
+      ...(filter.requestor.length > 0 && {
+        requestor: { [Op.in]: filter.requestor!.map((pair) => pair.value) },
       }),
       ...(filter.titleSubstring && {
         title: { [Op.iLike]: `%${filter.titleSubstring}%` },
@@ -59,14 +58,13 @@ async function getFilteredTickets(filter: TicketFilter) {
     include: [
       {
         association: "diagnoses",
-        ...(filter.diagnoses &&
-          filter.diagnoses.length > 0 && {
-            where: {
-              value: {
-                [Op.in]: reformedDiagnoses,
-              },
+        ...(filter.diagnoses.length > 0 && {
+          where: {
+            value: {
+              [Op.in]: reformedDiagnoses,
             },
-          }),
+          },
+        }),
       },
     ],
   });
@@ -133,20 +131,25 @@ async function _fetchNewTicketReport() {
   return report;
 }
 
-// (() => {
-//   const filter: TicketFilter = {
-//     layout: "chart",
-//     grouping: "building",
-//     building: "Lillis Business Complex, Willamette Hall",
-//   };
-
-//   getFilteredTickets(filter).then((result) =>
-//     console.log(result.map((r) => r.get({ plain: true }))),
-//   );
-// })();
-
 export default {
-  // TODO -- IN PROGRESS
+  fetchBuildings: async (req: Request, res: Response) => {
+    const results = await sequelize.query(
+      "SELECT DISTINCT location AS building FROM Tickets",
+      { type: QueryTypes.SELECT },
+    );
+    console.log(results);
+    res.status(200).json(results);
+    return;
+  },
+  fetchRequestors: async (req: Request, res: Response) => {
+    const results = await sequelize.query(
+      "SELECT DISTINCT requestor FROM Tickets",
+      { type: QueryTypes.SELECT },
+    );
+    console.log(results);
+    res.status(200).json(results);
+    return;
+  },
   fetchFilteredTickets: async (req: Request, res: Response) => {
     const filter: TicketFilter = req.body!.filter;
     console.log(filter);
@@ -155,18 +158,18 @@ export default {
     const formattedData = data.map((r) => r.get({ plain: true }));
 
     // console.log(formattedData);
-    res.json(formattedData).status(200).send();
+    res.status(200).json(formattedData);
     return;
   },
   fetchNewTicketReport: async (req: Request, res: Response) => {
     const data = await _fetchNewTicketReport();
 
     if (data.error) {
-      res.json(data).status(400).send();
+      res.status(400).json(data);
       return;
     }
 
-    res.json(data).status(200).send();
+    res.status(200).json(data);
     return;
   },
   refreshReport: async (req: Request, res: Response) => {

@@ -8,12 +8,16 @@ import { useAuth } from "../provider/AuthProvider";
 // A layout defines a set of parameters
 function ViewCreationPage() {
   const [filter, setFilter] = useState({
-    grouping: "none",
     layout: "chart",
+    grouping: "week",
+    building: [],
+    diagnoses: [],
+    requestor: [],
   } as IFormInputs);
 
-  const { token } = useAuth();
+  const [filteredData, setFilteredData] = useState([]);
 
+  const { token } = useAuth();
   useEffect(() => {
     fetch(
       `${import.meta.env.VITE_API_URL}/api/tickets/fetch-filtered-tickets`,
@@ -27,7 +31,10 @@ function ViewCreationPage() {
       },
     )
       .then((res) => res.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        setFilteredData(data);
+        console.log(data);
+      });
   }, [token, filter]);
 
   return (

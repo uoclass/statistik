@@ -1,7 +1,8 @@
 import { Controller, useForm } from "react-hook-form";
 import "./FormElements.css";
+import "./Callout.css";
 import { useAuth } from "../provider/AuthProvider";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { diagnosisOptions } from "./DiagnosisOptions";
 import Select from "react-select";
 
@@ -10,10 +11,10 @@ export interface IFormInputs {
   layout: "list" | "chart";
   termStart?: string | null;
   termEnd?: string | null;
-  building?: string | null;
+  building?: Array<{ value: string; label: string }> | [];
   room?: string | null;
-  requestor?: Array<string> | null;
-  diagnoses?: Array<{ value: string; label: string }> | Array<string> | null;
+  requestor?: Array<{ value: string; label: string }> | [];
+  diagnoses?: Array<{ value: string; label: string }> | [];
   titleSubstring?: string | null;
   matchAllDiagnoses?: boolean | null;
 }
@@ -24,6 +25,18 @@ const Form = ({
   setFilter: Dispatch<SetStateAction<IFormInputs>>;
 }) => {
   const token = useAuth();
+  const [buildingOptions, setBuildingOptions] = useState([
+    {
+      label: "",
+      value: "",
+    },
+  ]);
+  const [requestorOptions, setRequestorOptions] = useState([
+    {
+      label: "",
+      value: "",
+    },
+  ]);
 
   const {
     register,
@@ -31,16 +44,61 @@ const Form = ({
     watch,
     control,
     formState: { errors },
-  } = useForm<IFormInputs>();
+  } = useForm<IFormInputs>({
+    defaultValues: {
+      layout: "chart",
+      building: [],
+      requestor: [],
+      diagnoses: [],
+    },
+  });
 
   // watches for conditional form rendering
-  const watchLayout = watch("layout", "chart");
+  const watchLayout = watch("layout");
   const watchGrouping = watch("grouping");
 
   const onSubmit = async (filter: IFormInputs) => {
     console.log(filter);
     setFilter(filter);
   };
+
+  useEffect(() => {
+    // set building options based on data found in report
+    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/buildings`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data.map((entry: { building: string }) => {
+          if (entry.building === "") {
+            return {
+              value: "",
+              label: "Unspecified Building",
+            };
+          }
+          return { value: entry.building, label: entry.building };
+        });
+      })
+      .then((options) => setBuildingOptions(options));
+
+    // fetch and set requestor options
+    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/requestors`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data.map((entry: { requestor: string }) => {
+          return { value: entry.requestor, label: entry.requestor };
+        });
+      })
+      .then((options) => setRequestorOptions(options));
+  }, []);
 
   return (
     <form
@@ -76,7 +134,39 @@ const Form = ({
         {watchGrouping !== "building" && (
           <>
             <label htmlFor="building">Building</label>
-            <input {...register("building")} />
+            <Controller
+              name="building"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  isMulti
+                  options={buildingOptions}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (baseStyles) => ({
+                      ...baseStyles,
+                      border: 0,
+                      borderRadius: 0,
+                      boxShadow: "none",
+                      maxWidth: "400px",
+                      backgroundColor: "rgb(222, 222, 222)",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected
+                        ? "#192E49"
+                        : "rgb(211, 211, 211)",
+                      "&:hover": {
+                        backgroundColor: "rgb(162, 164, 166)",
+                      },
+                      cursor: "pointer",
+                    }),
+                  }}
+                />
+              )}
+            />
           </>
         )}
         {watchGrouping !== "building" && watchGrouping !== "room" && (
@@ -88,7 +178,40 @@ const Form = ({
         {watchGrouping !== "requestor" && (
           <>
             <label htmlFor="requestor">Requestor</label>
-            <input {...register("requestor")} />
+
+            <Controller
+              name="requestor"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  isMulti
+                  options={requestorOptions}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (baseStyles) => ({
+                      ...baseStyles,
+                      border: 0,
+                      borderRadius: 0,
+                      boxShadow: "none",
+                      maxWidth: "400px",
+                      backgroundColor: "rgb(222, 222, 222)",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected
+                        ? "#192E49"
+                        : "rgb(211, 211, 211)",
+                      "&:hover": {
+                        backgroundColor: "rgb(162, 164, 166)",
+                      },
+                      cursor: "pointer",
+                    }),
+                  }}
+                />
+              )}
+            />
           </>
         )}
         {watchLayout === "list" && (
@@ -150,10 +273,7 @@ const Form = ({
           </>
         )}
       </div>
-      <button
-        className="border-2 border-gray-600 p-1 my-2 min-w-25"
-        type="submit"
-      >
+      <button className="callout-button" type="submit">
         Submit
       </button>
     </form>
