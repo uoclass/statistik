@@ -30,7 +30,6 @@ body {
     flex-direction: column;
     min-height: 100vh;
     font-size: 1.1rem;
-    font-weight: normal;
 }
 
 .App-header {
