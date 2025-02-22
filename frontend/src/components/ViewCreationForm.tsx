@@ -118,9 +118,9 @@ const Form = ({
         </select>
         <label htmlFor="grouping">Grouping</label>
         <select {...register("grouping")}>
+          <option value="building">Building</option>
           <option value="week">Week</option>
           <option value="requestor">Requestor</option>
-          <option value="building">Building</option>
           <option value="room">Room</option>
           <option value="diagnoses">Diagnoses</option>
           {watchLayout === "list" && <option value="none">None</option>}
