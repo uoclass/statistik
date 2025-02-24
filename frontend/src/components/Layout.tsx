@@ -7,6 +7,7 @@ import "./Layout.css";
 function Layout() {
   return (
     <div className="App [&_input:focus]:ring-0 [&_input]:border-0 [&_select:focus]:ring-0 [&_select]:border-0">
+      <img src="longGradient.svg" />
       <div className="App-content">
         <Header />
         <Nav />
