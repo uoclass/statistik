@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    // allow JSX files
-    "allowJs": true,
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] },
+    "allowJs": true
   },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ],
+  ]
 }

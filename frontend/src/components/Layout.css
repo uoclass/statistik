@@ -7,51 +7,51 @@
  */
 
 body {
-    margin: 0;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light",
-        "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  font-family:
+    "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica,
+    Arial, "Lucida Grande", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .gray-background {
-    background-color: #e9ecef;
+  background-color: #e9ecef;
 }
 
 .App {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .App-content {
-    width: 800px;
-    margin: 0 auto; /* Center the content horizontally */
-    max-width: 90%; /* Ensures the content never exceeds 90% of the viewport width */
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    font-size: 1.1rem;
+  width: 800px;
+  margin: 0 auto; /* Center the content horizontally */
+  max-width: 90%; /* Ensures the content never exceeds 90% of the viewport width */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-size: 1.1rem;
 }
 
 .App-header {
-    font-size: 3rem;
-    font-weight: 500;
-    padding-top: 1rem;
-    color: black;
+  font-size: 3rem;
+  font-weight: 500;
+  color: black;
 }
 
 .App-body {
-    margin: calc(15px + 1vh) 0px calc(15px + 1vh) 0px;
-    flex: 1;
+  margin: calc(15px + 1vh) 0px calc(15px + 1vh) 0px;
+  flex: 1;
 }
 
 .App-footer {
-    font: "Helvetica Neue";
-    color: #666666;
-    font-size: calc(8px + 1vmin);
+  font: "Helvetica Neue";
+  color: #666666;
+  font-size: calc(8px + 1vmin);
 }
 
 .error-label {
-    color: red;
+  color: red;
 }
 
 .redirect-error-banner {
@@ -70,12 +70,12 @@ body {
 }
 
 .Nav-list a {
-  color: #AAAAAA;
+  color: #aaaaaa;
   text-decoration: none;
 }
 
 iconify-icon {
-    display: inline-block;
-    width: 2em;
-    height: 1em;
-  }
+  display: inline-block;
+  width: 2em;
+  height: 1em;
+}

@@ -1,5 +1,6 @@
 import { useAuth } from "../provider/AuthProvider";
 import { useEffect, useState } from "react";
+import Button from "./Button";
 import "./Callout.css";
 
 function formatUnixTime(unixTime: number) {
@@ -62,12 +63,10 @@ function ReportCacheStatusCallout() {
           </p>
         ) : (
           <p>
-            Using ticket data as of <span className={"loading-text-box"} />
+            Using ticket data as of <span className="loading-text-box" />
           </p>
         )}
-        <button className={"callout-button"} onClick={refreshReport}>
-          Refresh
-        </button>
+        <Button onClick={refreshReport}>Refresh</Button>
       </div>
     </>
   );
