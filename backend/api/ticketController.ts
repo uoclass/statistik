@@ -38,6 +38,19 @@ async function getFilteredTickets(filter: TicketFilter) {
     reformedDiagnoses = filter.diagnoses.map((pair) => pair.value);
   }
 
+  const {
+    grouping,
+    termStart,
+    termEnd,
+    building,
+    requestor,
+    diagnoses,
+    room,
+    titleSubstring,
+    matchAllDiagnoses,
+  } = filter;
+
+  // get list of group names
   return await Ticket.findAll({
     where: {
       created: {

@@ -16,6 +16,7 @@ export class User extends Model<
 > {
   @Attribute(DataTypes.STRING)
   declare username: string | null;
+  declare unique: true;
 
   @Attribute(DataTypes.CHAR(60).BINARY)
   declare password: string | null;
