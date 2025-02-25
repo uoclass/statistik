@@ -45,7 +45,12 @@ const GeneratedView = ({
 
   let chartData = translateData(groupedData); // execute translation
   chartData = chartData.slice(0, 20); // visuals begin to break > 20 items
-  chartData.sort((first, second) => second.quantity! - first.quantity!); // sort items descending by quantity in bucket
+
+  // sort groupings
+  if (filter.grouping !== "week") {
+    // sort items descending by quantity in bucket
+    chartData.sort((first, second) => second.quantity! - first.quantity!);
+  }
 
   const chartConfig = {
     tickets: {
@@ -68,7 +73,7 @@ const GeneratedView = ({
           axisLine={false}
           width={200}
         />
-        <Bar dataKey="quantity" fill="#FF0000" radius={4}>
+        <Bar dataKey="quantity" fill="#FF0000" radius={1}>
           <LabelList
             dataKey="quantity"
             position="right"

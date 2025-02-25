@@ -1,7 +1,7 @@
 import GeneratedView from "../components/GeneratedView";
 import ReportCacheStatusCallout from "../components/ReportCacheStatusCallout";
 import ViewCreationForm from "../components/ViewCreationForm";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { IFormInputs } from "../components/ViewCreationForm";
 import { useAuth } from "../provider/AuthProvider";
 
@@ -35,7 +35,8 @@ function ViewCreationPage() {
   const [filteredData, setFilteredData] = useState([] as Array<Ticket>);
 
   const { token } = useAuth();
-  useEffect(() => {
+
+  const fetchTicketData = useCallback(() => {
     fetch(
       `${import.meta.env.VITE_API_URL}/api/tickets/fetch-filtered-tickets`,
       {
@@ -55,6 +56,10 @@ function ViewCreationPage() {
         console.log(data);
       });
   }, [token, filter]);
+
+  useEffect(() => {
+    fetchTicketData();
+  }, [fetchTicketData]);
 
   return (
     <>

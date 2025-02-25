@@ -7,7 +7,7 @@ import "./Layout.css";
 function Layout() {
   return (
     <div className="App [&_input:focus]:ring-0 [&_input]:border-0 [&_select:focus]:ring-0 [&_select]:border-0">
-      <img src="longGradient.svg" />
+      <img src="gradientHeader.svg" />
       <div className="App-content">
         <Header />
         <Nav />
@@ -16,6 +16,7 @@ function Layout() {
         </div>
         <Footer />
       </div>
+      <img src="gradientFooter.svg" />
     </div>
   );
 }
