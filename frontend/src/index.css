@@ -94,6 +94,15 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+@layer components {
+  .loading-text {
+    display: inline-block;
+    height: calc(10px + 1vmin);
+    width: 300px;
+    background: #bdbdbd;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
