@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@iconify/react": "^5.2.0",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-radio-group": "^1.2.3",
     "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/vite": "^4.0.7",
     "axios": "^1.7.9",
@@ -21,6 +23,7 @@
     "cmdk": "^1.0.4",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "html-to-image": "^1.11.13",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.475.0",
     "radix-ui": "^1.1.3",
