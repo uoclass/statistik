@@ -2,7 +2,13 @@ import { IFormInputs } from "@/components/ViewCreationForm";
 import { Ticket } from "@/pages/ViewCreationPage";
 import { YAxis, XAxis, Bar, BarChart, LabelList } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { Card, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { getWeekBucket } from "@/lib/viewUtils";
 
 const GeneratedView = ({
@@ -41,6 +47,7 @@ const GeneratedView = ({
       return {
         grouping: filter.grouping || "none",
         name: groupName,
+        tickets: tickets,
         quantity: tickets?.length,
       };
     });
@@ -63,9 +70,7 @@ const GeneratedView = ({
   } satisfies ChartConfig;
   return (
     <Card>
-      <CardTitle>
-        Generated View
-      </CardTitle>
+      <CardTitle>Generated View</CardTitle>
       <CardDescription>
         Ticket
         {filter?.grouping !== "none" ? ` quantity by ${filter.grouping}` : "s"}
@@ -75,7 +80,12 @@ const GeneratedView = ({
           config={chartConfig}
           className="min-h-[600px] w-full place-self-start"
         >
-          <BarChart accessibilityLayer data={chartData || []} layout="vertical" margin={{right: 16,}}>
+          <BarChart
+            accessibilityLayer
+            data={chartData || []}
+            layout="vertical"
+            margin={{ right: 16 }}
+          >
             <XAxis type="number" dataKey="quantity" hide />
             <YAxis
               type="category"

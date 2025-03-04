@@ -71,6 +71,7 @@ function ViewCreationPage() {
     )
       .then((res) => res.json())
       .then((data: Array<Ticket>) => {
+        console.log(data);
         setFilteredData(data);
       });
   }, [token, filter]);
