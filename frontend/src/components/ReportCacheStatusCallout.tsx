@@ -2,6 +2,7 @@ import { useAuth } from "../provider/AuthProvider";
 import { useEffect, useState } from "react";
 import Button from "./Button";
 import "./Callout.css";
+import Icon from "@/components/Icons";
 
 function formatUnixTime(unixTime: number) {
   const date = new Date(unixTime);
@@ -17,10 +18,12 @@ function formatUnixTime(unixTime: number) {
 }
 
 function ReportCacheStatusCallout() {
-  const token = useAuth();
+  const { token, username } = useAuth();
   const [reportCacheGenTime, setReportCacheGenTime] = useState("");
+  const [isRefreshLoading, setIsRefreshLoading] = useState(false);
 
   const refreshReport = async () => {
+    setIsRefreshLoading(true);
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/refresh-report`, {
       method: "POST",
       headers: {
@@ -28,10 +31,15 @@ function ReportCacheStatusCallout() {
       },
     }).then(() => {
       setReportCacheGenTime("");
+      setIsRefreshLoading(false);
     });
   };
 
   useEffect(() => {
+    if (!username) {
+      return;
+    }
+
     async function fetchRefreshTime() {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/tickets/report-cache-generation-time`,
@@ -48,11 +56,10 @@ function ReportCacheStatusCallout() {
       console.log(result.timestamp);
       return formatUnixTime(result.timestamp);
     }
-
     fetchRefreshTime().then((timestamp) => {
       setReportCacheGenTime(timestamp ? timestamp : "");
     });
-  }, [token, reportCacheGenTime]);
+  }, [token, reportCacheGenTime, username]);
 
   return (
     <>
@@ -66,7 +73,18 @@ function ReportCacheStatusCallout() {
             Using ticket data as of <span className="loading-text-box" />
           </p>
         )}
-        <Button onClick={refreshReport}>Refresh</Button>
+
+        <Button onClick={refreshReport} disabled={false}>
+          {!isRefreshLoading && "Refresh"}
+          {isRefreshLoading && (
+            <>
+              Refreshing
+              <div className="h-4 w-4 place-self-center animate-spin">
+                <Icon icon="spinner" width={4} />
+              </div>
+            </>
+          )}
+        </Button>
       </div>
     </>
   );
