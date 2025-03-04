@@ -2,6 +2,7 @@ import { IFormInputs } from "@/components/ViewCreationForm";
 import { Ticket } from "@/pages/ViewCreationPage";
 import { YAxis, XAxis, Bar, BarChart, LabelList } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { Card, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { getWeekBucket } from "@/lib/viewUtils";
 
 const GeneratedView = ({
@@ -23,6 +24,8 @@ const GeneratedView = ({
         return ticket.location;
       case "requestor":
         return ticket.requestor;
+      case "room":
+        return `${ticket.location || "Unspecified Building"} ${ticket.room}`;
       default:
         return ticket.location;
     }
@@ -31,12 +34,12 @@ const GeneratedView = ({
   // translate into chartable format
   const translateData = (data: Partial<Record<string, Ticket[]>>) => {
     return Object.entries(data).map(([groupName, tickets]) => {
-      if (groupName === "") {
-        groupName = "Unspecified Building";
+      if (!groupName || groupName === "") {
+        groupName = "Unspecified";
       }
 
       return {
-        grouping: filter?.grouping || "none",
+        grouping: filter.grouping || "none",
         name: groupName,
         quantity: tickets?.length,
       };
@@ -59,30 +62,44 @@ const GeneratedView = ({
     },
   } satisfies ChartConfig;
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="min-h-[600px] w-full place-self-center"
-    >
-      <BarChart accessibilityLayer data={chartData || []} layout="vertical">
-        <XAxis type="number" dataKey="quantity" hide />
-        <YAxis
-          type="category"
-          dataKey="name"
-          textAnchor="end"
-          tickLine={false}
-          axisLine={false}
-          width={200}
-        />
-        <Bar dataKey="quantity" fill="#FF0000" radius={1}>
-          <LabelList
-            dataKey="quantity"
-            position="right"
-            offset={8}
-            className="fill-black"
-          />
-        </Bar>
-      </BarChart>
-    </ChartContainer>
+    <Card>
+      <CardTitle>
+        Generated View
+      </CardTitle>
+      <CardDescription>
+        Ticket
+        {filter?.grouping !== "none" ? ` quantity by ${filter.grouping}` : "s"}
+      </CardDescription>
+      <CardContent>
+        <ChartContainer
+          config={chartConfig}
+          className="min-h-[600px] w-full place-self-start"
+        >
+          <BarChart accessibilityLayer data={chartData || []} layout="vertical" margin={{right: 16,}}>
+            <XAxis type="number" dataKey="quantity" hide />
+            <YAxis
+              type="category"
+              dataKey="name"
+              textAnchor="end"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              width={150}
+            />
+            <Bar dataKey="quantity" fill="#FF0000" radius={0}>
+              <LabelList
+                dataKey="quantity"
+                position="right"
+                offset={6}
+                className="fill-black"
+              />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter>Generated on Statistik</CardFooter>
+    </Card>
   );
 };
+
 export default GeneratedView;

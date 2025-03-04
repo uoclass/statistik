@@ -1,9 +1,12 @@
+import { toPng } from "html-to-image";
 import GeneratedView from "../components/GeneratedView";
 import ReportCacheStatusCallout from "../components/ReportCacheStatusCallout";
 import ViewCreationForm from "../components/ViewCreationForm";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { IFormInputs } from "../components/ViewCreationForm";
+import Button from "@/components/Button";
 import { useAuth } from "../provider/AuthProvider";
+import Icon from "@/components/Icons";
 
 export interface Ticket {
   id: number;
@@ -33,8 +36,26 @@ function ViewCreationPage() {
   } as IFormInputs);
 
   const [filteredData, setFilteredData] = useState([] as Array<Ticket>);
+  const { token, username } = useAuth();
 
-  const { token } = useAuth();
+  // chart ref for image saving
+  const ref = useRef<HTMLDivElement>(null);
+
+  // save image handler
+  const onSaveButtonClick = useCallback(() => {
+    if (ref.current === null) return;
+
+    toPng(ref.current!, { cacheBust: true })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = "statistik-chart.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [ref]);
 
   const fetchTicketData = useCallback(() => {
     fetch(
@@ -51,9 +72,6 @@ function ViewCreationPage() {
       .then((res) => res.json())
       .then((data: Array<Ticket>) => {
         setFilteredData(data);
-
-        // ticket array
-        console.log(data);
       });
   }, [token, filter]);
 
@@ -63,8 +81,16 @@ function ViewCreationPage() {
 
   return (
     <>
-      <h3>Create a new view</h3>
-      <GeneratedView data={filteredData} filter={filter} />
+      <h1>Create a new view</h1>
+      <div ref={ref}>
+        <GeneratedView data={filteredData} filter={filter} />
+      </div>
+      <Button onClick={onSaveButtonClick}>
+        Save Image
+        <div className="place-self-center">
+          <Icon icon="save" width={4} />
+        </div>
+      </Button>
       <ReportCacheStatusCallout />
       <ViewCreationForm setFilter={setFilter} />
     </>

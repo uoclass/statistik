@@ -24,7 +24,7 @@ const Form = ({
 }: {
   setFilter: Dispatch<SetStateAction<IFormInputs>>;
 }) => {
-  const token = useAuth();
+  const { token } = useAuth();
   const [buildingOptions, setBuildingOptions] = useState([
     {
       label: "",
@@ -68,6 +68,7 @@ const Form = ({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => response.json())
@@ -89,6 +90,7 @@ const Form = ({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => response.json())
@@ -98,13 +100,14 @@ const Form = ({
         });
       })
       .then((options) => setRequestorOptions(options));
-  }, []);
+  }, [token]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Button type="submit">Generate view</Button>
       <div
         className="grid grid-cols-2 gap-2 min-w-[400px] [&_select]:bg-light-gray
-        [&_input]:bg-light-gray [&_input]:px-2 [&_label]:pt-2"
+        [&_input]:bg-light-gray [&_input]:px-2 [&_select]:h-8 [&_input]:h-8 [&_label]:pt-2"
       >
         <div id="display-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Display</h3>
@@ -279,7 +282,6 @@ const Form = ({
           )}
         </div>
       </div>
-      <Button type="submit">Submit</Button>
     </form>
   );
 };
