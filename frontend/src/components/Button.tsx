@@ -2,28 +2,29 @@ import React from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-interface IButtonProps {
+interface IButtonProps extends React.HTMLProps<HTMLButtonElement> {
   children?: React.ReactNode;
   props?: any;
   onClick?: any;
   type?: any;
 }
 
-const Button: React.FC<IButtonProps> = ({
+const Button = ({
   children,
   onClick,
   type = "button",
-}) => {
+  ...props
+}: IButtonProps) => {
   return (
     <button
       type={type}
       onClick={onClick}
       className="
-        inline-block
+        inline-flex
+        gap-2
         border-none
         py-2
         px-6
-        m-0
         no-underline
         bg-zinc-800
         text-white
@@ -38,6 +39,7 @@ const Button: React.FC<IButtonProps> = ({
         ease-in-out
         hover:bg-zinc-600
       "
+      {...props}
     >
       {children}
     </button>
