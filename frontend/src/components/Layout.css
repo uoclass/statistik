@@ -33,12 +33,6 @@ body {
   font-size: 1.1rem;
 }
 
-.App-header {
-  font-size: 3rem;
-  font-weight: 500;
-  color: black;
-}
-
 .App-body {
   margin: calc(15px + 1vh) 0px calc(15px + 1vh) 0px;
   flex: 1;
@@ -72,10 +66,4 @@ body {
 .Nav-list a {
   color: #aaaaaa;
   text-decoration: none;
-}
-
-iconify-icon {
-  display: inline-block;
-  width: 2em;
-  height: 1em;
 }
