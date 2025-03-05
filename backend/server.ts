@@ -11,6 +11,7 @@ import sequelize from "./database.ts";
 /* Routes */
 import ticketRoutes from "./api/ticketRoutes.ts";
 import authRoutes from "./api/authRoutes.ts";
+import { authenticationMiddleware } from "api/authController.ts";
 
 /* Middleware Setup */
 const app = express();
@@ -21,7 +22,7 @@ app.use(express.json());
 app.use(logger);
 
 /* Mount routes */
-app.use("/api/tickets", ticketRoutes);
+app.use("/api/tickets", authenticationMiddleware, ticketRoutes);
 app.use("/api/auth", authRoutes);
 
 /* Configure Server Listener */

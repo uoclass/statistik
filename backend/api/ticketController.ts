@@ -1,9 +1,11 @@
 import { Ticket, TicketFieldsType } from "../models/ticket.model.ts";
+import { type ViewConfig } from "models/display.model.ts";
 import { Diagnosis } from "models/diagnosis.model.ts";
 import sequelize from "../database.ts";
 import dotenv from "dotenv";
 import { Op, QueryTypes } from "@sequelize/core";
 import { Request, Response } from "express";
+import { User } from "models/user.model.ts";
 
 dotenv.config({ path: "../.env.local" });
 
@@ -12,27 +14,11 @@ interface LoginRequestParams {
   password: string;
 }
 
-interface TicketFilter {
-  // display
-  layout: string;
-  grouping: string;
-
-  // filters
-  termStart?: string;
-  termEnd?: string;
-  building: Array<{ value: string; label: string }>;
-  requestor: Array<{ value: string; label: string }>;
-  diagnoses: Array<{ value: string; label: string }>;
-  room?: string;
-  titleSubstring?: string;
-  matchAllDiagnoses?: boolean;
-}
-
-function ValidateTicketFilter(filter: TicketFilter) {
+function ValidateTicketFilter(filter: ViewConfig) {
   return;
 }
 
-async function getFilteredTickets(filter: TicketFilter) {
+async function getFilteredTickets(filter: ViewConfig) {
   let reformedDiagnoses = new Array<string>();
   if (filter.diagnoses) {
     reformedDiagnoses = filter.diagnoses.map((pair) => pair.value);
@@ -145,6 +131,48 @@ async function _fetchNewTicketReport() {
 }
 
 export default {
+  saveViewConfig: async (req: Request, res: Response) => {
+    const { config } = req.body;
+    const user = await User.findOne({
+      where: {
+        username: req.username,
+      },
+      plain: true,
+    });
+
+    if (!user) {
+      res.status(500).json({ error: "Failed to find associated user." });
+      return;
+    }
+
+    user.createDisplay(config).then(() => {
+      res.status(200).json({ message: "Successfully saved view!" });
+    });
+  },
+  fetchViewConfigs: async (req: Request, res: Response) => {
+    const user = await User.findOne({
+      where: {
+        username: req.username,
+      },
+      plain: true,
+    });
+
+    if (!user) {
+      res.status(500).json({ error: "Failed to find user." });
+      return;
+    }
+
+    const viewConfigs = await user.getDisplays();
+    const fullName = user.dataValues.fullName;
+
+    console.log(fullName);
+    console.log(viewConfigs);
+
+    res.status(200).json({
+      name: user.dataValues.fullName,
+      viewConfigs: viewConfigs,
+    });
+  },
   fetchBuildings: async (req: Request, res: Response) => {
     const results = await sequelize.query(
       "SELECT DISTINCT location AS building FROM Tickets",
@@ -164,7 +192,7 @@ export default {
     return;
   },
   fetchFilteredTickets: async (req: Request, res: Response) => {
-    const filter: TicketFilter = req.body!.filter;
+    const filter: ViewConfig = req.body!.filter;
     console.log(filter);
     const data = await getFilteredTickets(filter);
 
@@ -204,11 +232,12 @@ export default {
         department: row.AccountName,
         location: row.LocationName,
         room: row.LocationRoomName,
-        created: new Date(row.CreatedDate),
-        modified: new Date(row.LastModifiedDate),
+        created: new Date(row.CreatedDate).toString(),
+        modified: new Date(row.LastModifiedDate).toString(),
         status: row.StatusName,
       });
 
+      // keep diagnosis list responsively up to date
       const diagnosisList = row["132559"] || "";
       const d = await Diagnosis.findAll({
         where: {

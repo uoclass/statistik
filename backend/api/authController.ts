@@ -3,14 +3,48 @@ import sequelize from "../database.ts";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { compareSync } from "bcrypt-ts";
-import type { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 dotenv.config({ path: "../.env.local" });
 const secret: string = process.env.JWT_PRIV_KEY;
 
+declare global {
+  namespace Express {
+    interface Request {
+      username?: any;
+    }
+  }
+}
+
 const issueJwt = (username: string, expiration: string | number) => {
   return jwt.sign({ username: username }, secret, {
     expiresIn: expiration,
+  });
+};
+
+export const authenticationMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({ message: "Authentication failed." });
+    return;
+  }
+
+  jwt.verify(token, secret, (error, decoded) => {
+    if (error) {
+      res.status(403).json({ message: "Invalid token." });
+      return;
+    }
+
+    const tokenPayload = decoded as jwt.JwtPayload & { username: string };
+    req.username = tokenPayload.username;
+
+    next();
   });
 };
 

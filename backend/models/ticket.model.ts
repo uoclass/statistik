@@ -60,10 +60,10 @@ export class Ticket extends Model<
   declare room: string | null;
 
   @Attribute(DataTypes.DATE)
-  declare created: Date | null;
+  declare created: string | null;
 
   @Attribute(DataTypes.DATE)
-  declare modified: Date | null;
+  declare modified: string | null;
 
   @Attribute(DataTypes.STRING)
   declare status: string | null;
