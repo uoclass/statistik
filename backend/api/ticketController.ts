@@ -87,7 +87,7 @@ async function _fetchAdminApiToken() {
   });
 
   // send post request to tdx api to recieve bearer token
-  return fetch(api_url, {
+  const token = await fetch(api_url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json; charset=UTF-8",
@@ -98,6 +98,8 @@ async function _fetchAdminApiToken() {
     .then((body) => {
       return body;
     });
+
+  return token;
 }
 
 /*
@@ -145,7 +147,7 @@ export default {
       return;
     }
 
-    user.createDisplay(config).then(() => {
+    user.createDisplay({ viewConfig: config }).then(() => {
       res.status(200).json({ message: "Successfully saved view!" });
     });
   },
@@ -178,6 +180,14 @@ export default {
       "SELECT DISTINCT location AS building FROM Tickets",
       { type: QueryTypes.SELECT },
     );
+    console.log(results);
+    res.status(200).json(results);
+    return;
+  },
+  fetchDiagnoses: async (req: Request, res: Response) => {
+    const results = await sequelize.query("SELECT value FROM Diagnoses", {
+      type: QueryTypes.SELECT,
+    });
     console.log(results);
     res.status(200).json(results);
     return;

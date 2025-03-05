@@ -8,6 +8,7 @@ router.get("/view-configs", controller.fetchViewConfigs);
 router.post("/save-config", controller.saveViewConfig);
 router.get("/buildings", controller.fetchBuildings);
 router.get("/requestors", controller.fetchRequestors);
+router.get("/diagnoses", controller.fetchDiagnoses);
 router.get("/fetch-new-ticket-report", controller.fetchNewTicketReport);
 router.post("/refresh-report", controller.refreshReport);
 router.get(
