@@ -36,10 +36,6 @@ function ReportCacheStatusCallout() {
   };
 
   useEffect(() => {
-    if (!username) {
-      return;
-    }
-
     async function fetchRefreshTime() {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/tickets/report-cache-generation-time`,
@@ -59,7 +55,7 @@ function ReportCacheStatusCallout() {
     fetchRefreshTime().then((timestamp) => {
       setReportCacheGenTime(timestamp ? timestamp : "");
     });
-  }, [token, reportCacheGenTime, username]);
+  }, [token, reportCacheGenTime]);
 
   return (
     <>

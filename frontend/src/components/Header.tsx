@@ -1,9 +1,3 @@
-// .App-header {
-//   font-size: 3rem;
-//   font-weight: 500;
-//   color: black;
-// }
-
 function Header() {
   /* This component displays the header.
    */

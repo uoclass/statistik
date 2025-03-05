@@ -1,22 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import type { AuthContextProps, AuthProviderChildren } from "@/types";
 
 // create empty context object to share authentication state between components
-
-interface AuthContextProps {
-  token: string | null;
-  setToken: (arg1: string) => void;
-  username: string | null;
-  setUsername: (arg1: string) => void;
-}
-
 const AuthContext = createContext({} as AuthContextProps);
 
-interface AuthProviderChildren {
-  children: React.ReactNode;
-}
-/* Component providing an authentication context.
- * The children prop represents components with access to the authentication context.
- */
+/* Component providing an authentication context. */
 const AuthProvider = ({ children }: AuthProviderChildren) => {
   // retrieve token from local storage if exists
   const [token, setTokenState] = useState(localStorage.getItem("token"));

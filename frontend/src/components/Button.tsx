@@ -1,13 +1,4 @@
-import React from "react";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-interface IButtonProps extends React.HTMLProps<HTMLButtonElement> {
-  children?: React.ReactNode;
-  props?: any;
-  onClick?: any;
-  type?: any;
-}
+import type { IButtonProps } from "@/types";
 
 const Button = ({
   children,

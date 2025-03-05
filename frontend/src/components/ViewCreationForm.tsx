@@ -1,23 +1,10 @@
 import { Controller, useForm } from "react-hook-form";
 import "./FormElements.css";
 import Button from "@/components/Button";
-import { useAuth } from "../provider/AuthProvider";
+import { useAuth } from "@/provider/AuthProvider";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { diagnosisOptions } from "./DiagnosisOptions";
 import Select from "react-select";
-
-export interface IFormInputs {
-  grouping: "none" | "week" | "requestor" | "building" | "room" | "diagnoses";
-  layout: "list" | "chart";
-  termStart?: string | null;
-  termEnd?: string | null;
-  building?: Array<{ value: string; label: string }> | [];
-  room?: string | null;
-  requestor?: Array<{ value: string; label: string }> | [];
-  diagnoses?: Array<{ value: string; label: string }> | [];
-  titleSubstring?: string | null;
-  matchAllDiagnoses?: boolean | null;
-}
+import type { IFormInputs } from "@/types";
 
 const Form = ({
   setFilter,
@@ -36,6 +23,10 @@ const Form = ({
       label: "",
       value: "",
     },
+  ]);
+
+  const [diagnosisOptions, setDiagnosisOptions] = useState([
+    { label: "", value: "" },
   ]);
 
   const {
@@ -62,6 +53,19 @@ const Form = ({
     setFilter(filter);
   };
 
+  const handleFormSave = async (filter: IFormInputs) => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/save-config`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ config: filter }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  };
+
   useEffect(() => {
     // set building options based on data found in report
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/buildings`, {
@@ -85,6 +89,20 @@ const Form = ({
       })
       .then((options) => setBuildingOptions(options));
 
+    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/diagnoses`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data.map((entry: { value: string }) => {
+          return { value: entry.value, label: entry.value };
+        });
+      })
+      .then((options) => setDiagnosisOptions(options));
     // fetch and set requestor options
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/requestors`, {
       method: "GET",
@@ -104,7 +122,10 @@ const Form = ({
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleFormSubmit)}>
-      <Button type="submit">Generate view</Button>
+      <div id="form-buttons" className="w-full inline-flex justify-between">
+        <Button type="submit">Generate view</Button>
+        <Button onClick={handleSubmit(handleFormSave)}>Save view</Button>
+      </div>
       <div
         className="grid grid-cols-2 gap-2 min-w-[400px] [&_select]:bg-light-gray
         [&_input]:bg-light-gray [&_input]:px-2 [&_select]:h-8 [&_input]:h-8 [&_label]:pt-2"

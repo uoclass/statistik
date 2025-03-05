@@ -3,28 +3,10 @@ import GeneratedView from "../components/GeneratedView";
 import ReportCacheStatusCallout from "../components/ReportCacheStatusCallout";
 import ViewCreationForm from "../components/ViewCreationForm";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { IFormInputs } from "../components/ViewCreationForm";
 import Button from "@/components/Button";
 import { useAuth } from "../provider/AuthProvider";
 import Icon from "@/components/Icons";
-
-export interface Ticket {
-  id: number;
-  ticket_id: string;
-  title: string;
-  assigned_to: string;
-  requestor: string;
-  email: string;
-  department: string;
-  location: string;
-  room: string;
-  created: string;
-  modified: string;
-  status: "Open" | "Closed";
-  createdAt: Date;
-  updatedAt: Date;
-  diagnoses: [];
-}
+import type { IFormInputs, Ticket } from "@/types";
 
 function ViewCreationPage() {
   const [filter, setFilter] = useState({
@@ -36,7 +18,7 @@ function ViewCreationPage() {
   } as IFormInputs);
 
   const [filteredData, setFilteredData] = useState([] as Array<Ticket>);
-  const { token, username } = useAuth();
+  const { token } = useAuth();
 
   // chart ref for image saving
   const ref = useRef<HTMLDivElement>(null);

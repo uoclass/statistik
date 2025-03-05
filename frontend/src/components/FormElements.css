@@ -6,22 +6,13 @@
 }
 
 p {
-    font-family: "Helvetica Neue", sans-serif;
-    font-weight: normal;
-    color: black;
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: normal;
+  color: black;
 }
 
-/* Remove calendar icon on date selection field (doesn't work on Firefox) */
-/*
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
-}
-*/
-
-
-.form-select, .form-input-date {
+.form-select,
+.form-input-date {
   font-family: "Helvetica Neue", sans-serif;
   font-weight: normal;
   color: black;

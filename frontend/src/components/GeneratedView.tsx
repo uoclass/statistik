@@ -1,5 +1,4 @@
-import { IFormInputs } from "@/components/ViewCreationForm";
-import { Ticket } from "@/pages/ViewCreationPage";
+import { Ticket, IFormInputs } from "@/types";
 import { YAxis, XAxis, Bar, BarChart, LabelList } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import {
