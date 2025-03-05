@@ -1,11 +1,12 @@
-import axios from "axios";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 // create empty context object to share authentication state between components
 
 interface AuthContextProps {
   token: string | null;
   setToken: (arg1: string) => void;
+  username: string | null;
+  setUsername: (arg1: string) => void;
 }
 
 const AuthContext = createContext({} as AuthContextProps);
@@ -19,7 +20,7 @@ interface AuthProviderChildren {
 const AuthProvider = ({ children }: AuthProviderChildren) => {
   // retrieve token from local storage if exists
   const [token, setTokenState] = useState(localStorage.getItem("token"));
-
+  const [username, setUsername] = useState(sessionStorage.getItem("username"));
   /* Update the token value using the state setter function from the useState hook
    */
   const setToken = (newToken: string) => {
@@ -30,23 +31,23 @@ const AuthProvider = ({ children }: AuthProviderChildren) => {
   // this runs when the token value changes
   useEffect(() => {
     if (token) {
-      // token exists, set auth header in axios and localStorage
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      sessionStorage.setItem("username", username || "");
       localStorage.setItem("token", token);
     } else {
-      // token does not exist, remove auth header from axios and localStorage
-      delete axios.defaults.headers.common["Authorization"];
+      sessionStorage.removeItem("username");
       localStorage.removeItem("token");
     }
-  }, [token]);
+  }, [token, username]);
 
   // create memoized context value (saved across renders)
   const contextValue = useMemo(
     () => ({
       token,
       setToken,
+      username,
+      setUsername,
     }),
-    [token],
+    [token, username],
   );
 
   return (
