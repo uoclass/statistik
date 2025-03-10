@@ -1,10 +1,11 @@
 import { Controller, useForm } from "react-hook-form";
 import "./FormElements.css";
 import Button from "@/components/Button";
+import { ChartColumn } from "lucide-react";
 import { useAuth } from "@/provider/AuthProvider";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Select from "react-select";
 import type { IFormInputs } from "@/types";
+import StyledMultiSelect from "./MultiSelect";
 
 const Form = ({
   setFilter,
@@ -51,9 +52,6 @@ const Form = ({
   const handleFormSubmit = async (filter: IFormInputs) => {
     console.log(filter);
     setFilter(filter);
-  };
-
-  const handleFormSave = async (filter: IFormInputs) => {
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/save-config`, {
       method: "POST",
       headers: {
@@ -68,6 +66,11 @@ const Form = ({
 
   useEffect(() => {
     // set building options based on data found in report
+    if (!token) {
+      console.log("No token.");
+      return;
+    }
+
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/buildings`, {
       method: "GET",
       headers: {
@@ -122,10 +125,10 @@ const Form = ({
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleFormSubmit)}>
-      <div id="form-buttons" className="w-full inline-flex justify-between">
-        <Button type="submit">Generate view</Button>
-        <Button onClick={handleSubmit(handleFormSave)}>Save view</Button>
-      </div>
+      <Button type="submit">
+        Generate view
+        <ChartColumn width={22} />
+      </Button>
       <div
         className="grid grid-cols-2 gap-2 min-w-[400px] [&_select]:bg-light-gray
         [&_input]:bg-light-gray [&_input]:px-2 [&_select]:h-8 [&_input]:h-8 [&_label]:pt-2"
@@ -166,33 +169,7 @@ const Form = ({
                 name="building"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    {...field}
-                    isMulti
-                    options={buildingOptions}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        border: 0,
-                        borderRadius: 0,
-                        boxShadow: "none",
-                        maxWidth: "400px",
-                        backgroundColor: "rgb(222, 222, 222)",
-                      }),
-                      option: (provided, state) => ({
-                        ...provided,
-                        backgroundColor: state.isSelected
-                          ? "#192E49"
-                          : "rgb(211, 211, 211)",
-                        "&:hover": {
-                          backgroundColor: "rgb(162, 164, 166)",
-                        },
-                        cursor: "pointer",
-                      }),
-                    }}
-                  />
+                  <StyledMultiSelect {...field} options={buildingOptions} />
                 )}
               />
             </>
@@ -211,33 +188,7 @@ const Form = ({
                 name="requestor"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    {...field}
-                    isMulti
-                    options={requestorOptions}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        border: 0,
-                        borderRadius: 0,
-                        boxShadow: "none",
-                        maxWidth: "400px",
-                        backgroundColor: "rgb(222, 222, 222)",
-                      }),
-                      option: (provided, state) => ({
-                        ...provided,
-                        backgroundColor: state.isSelected
-                          ? "#192E49"
-                          : "rgb(211, 211, 211)",
-                        "&:hover": {
-                          backgroundColor: "rgb(162, 164, 166)",
-                        },
-                        cursor: "pointer",
-                      }),
-                    }}
-                  />
+                  <StyledMultiSelect {...field} options={requestorOptions} />
                 )}
               />
             </>
@@ -255,33 +206,7 @@ const Form = ({
                 name="diagnoses"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    {...field}
-                    isMulti
-                    options={diagnosisOptions}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        border: 0,
-                        borderRadius: 0,
-                        boxShadow: "none",
-                        maxWidth: "400px",
-                        backgroundColor: "rgb(222, 222, 222)",
-                      }),
-                      option: (provided, state) => ({
-                        ...provided,
-                        backgroundColor: state.isSelected
-                          ? "#192E49"
-                          : "rgb(211, 211, 211)",
-                        "&:hover": {
-                          backgroundColor: "rgb(162, 164, 166)",
-                        },
-                        cursor: "pointer",
-                      }),
-                    }}
-                  />
+                  <StyledMultiSelect {...field} options={diagnosisOptions} />
                 )}
               />
             </>
