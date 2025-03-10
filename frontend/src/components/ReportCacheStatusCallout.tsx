@@ -18,7 +18,7 @@ function formatUnixTime(unixTime: number) {
 }
 
 function ReportCacheStatusCallout() {
-  const { token, username } = useAuth();
+  const { token } = useAuth();
   const [reportCacheGenTime, setReportCacheGenTime] = useState("");
   const [isRefreshLoading, setIsRefreshLoading] = useState(false);
 
@@ -70,7 +70,7 @@ function ReportCacheStatusCallout() {
           </p>
         )}
 
-        <Button onClick={refreshReport} disabled={false}>
+        <Button onClick={refreshReport} disabled={isRefreshLoading}>
           {!isRefreshLoading && "Refresh"}
           {isRefreshLoading && (
             <>

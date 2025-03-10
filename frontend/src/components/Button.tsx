@@ -1,4 +1,5 @@
 import type { IButtonProps } from "@/types";
+import { twMerge } from "tailwind-merge";
 
 const Button = ({
   children,
@@ -10,7 +11,8 @@ const Button = ({
     <button
       type={type}
       onClick={onClick}
-      className="
+      className={twMerge(
+        `
         inline-flex
         gap-2
         border-none
@@ -29,8 +31,8 @@ const Button = ({
         duration-250
         ease-in-out
         hover:bg-zinc-600
-      "
-      {...props}
+      ` + props.className,
+      )}
     >
       {children}
     </button>
