@@ -11,7 +11,8 @@ Statistik is a powerful data visualization tool designed specifically for UO Cla
 **Advanced Filtering:** Filter tickets by date range, location, requestor, and specific diagnoses
 
 **Real-time Data:** Access up-to-date ticket information with a simple refresh
-Exportable Results: Save generated views as images for reports and presentations
+
+**Exportable Results:** Save generated views as images for reports and presentations
 
 ## How It Helps
 
