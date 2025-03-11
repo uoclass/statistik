@@ -248,14 +248,23 @@ export default {
       });
 
       // keep diagnosis list responsively up to date
-      const diagnosisList = row["132559"] || "";
-      const d = await Diagnosis.findAll({
-        where: {
-          value: diagnosisList.split(", "),
-        },
-      });
+      const diagnosisList: Array<string> = row["132559"]?.split(", ") || "";
 
-      await ticket.setDiagnoses(d);
+      // next iteration if no diagnoses found
+      if (!diagnosisList) continue;
+
+      const diagnoses = await Promise.all(
+        diagnosisList.map(
+          async (diagnosis) =>
+            await Diagnosis.findCreateFind({
+              where: {
+                value: diagnosis,
+              },
+            }),
+        ),
+      );
+
+      await ticket.setDiagnoses(diagnoses.map((d) => d[0]));
     }
 
     const message = { message: "Completed report cache refresh." };
