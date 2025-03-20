@@ -7,15 +7,24 @@ import Button from "@/components/Button";
 import { useAuth } from "../provider/AuthProvider";
 import Icon from "@/components/Icons";
 import type { IFormInputs, Ticket } from "@/types";
+import api from "@/api";
+
+import { useLocation } from "react-router-dom";
 
 function ViewCreationPage() {
-  const [filter, setFilter] = useState({
-    layout: "chart",
-    grouping: "building",
-    building: [],
-    diagnoses: [],
-    requestor: [],
-  } as IFormInputs);
+  const location = useLocation();
+  const savedFilter = location.state?.filter;
+
+  const [filter, setFilter] = useState(
+    savedFilter ||
+      ({
+        layout: "chart",
+        grouping: "building",
+        building: [],
+        diagnoses: [],
+        requestor: [],
+      } as IFormInputs),
+  );
 
   const [filteredData, setFilteredData] = useState([] as Array<Ticket>);
   const { token } = useAuth();
@@ -39,34 +48,18 @@ function ViewCreationPage() {
       });
   }, [ref]);
 
-  const fetchTicketData = useCallback(() => {
-    fetch(
-      `${import.meta.env.VITE_API_URL}/api/tickets/fetch-filtered-tickets`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ filter: filter }),
-      },
-    )
-      .then((res) => res.json())
-      .then((data: Array<Ticket>) => {
-        console.log(data);
-        setFilteredData(data);
-      });
-  }, [token, filter]);
-
   useEffect(() => {
-    fetchTicketData();
-  }, [fetchTicketData]);
+    api.fetchFilteredTickets({ token, filter }).then((data: Array<Ticket>) => {
+      setFilteredData(data);
+    });
+  }, [filter, token]);
 
   return (
     <>
       <h1>Create a new view</h1>
+      {/* Generated View Display */}
       <div ref={ref}>
-        <GeneratedView data={filteredData} filter={filter} />
+        <GeneratedView data={filteredData || []} filter={filter} />
       </div>
       <Button onClick={onSaveButtonClick}>
         Save Image
@@ -75,7 +68,8 @@ function ViewCreationPage() {
         </div>
       </Button>
       <ReportCacheStatusCallout />
-      <ViewCreationForm setFilter={setFilter} />
+      {/* View Creation Form */}
+      <ViewCreationForm filter={filter} setFilter={setFilter} />
     </>
   );
 }

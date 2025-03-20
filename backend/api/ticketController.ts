@@ -43,11 +43,11 @@ async function getFilteredTickets(filter: ViewConfig) {
         [Op.gte]: filter.termStart || new Date("1970-01-01"),
         [Op.lte]: filter.termEnd || new Date(),
       },
-      ...(filter.building.length > 0 && {
+      ...(filter.building?.length > 0 && {
         location: { [Op.in]: filter.building!.map((pair) => pair.value) },
       }),
       ...(filter.room && { room: { [Op.eq]: filter.room } }),
-      ...(filter.requestor.length > 0 && {
+      ...(filter.requestor?.length > 0 && {
         requestor: { [Op.in]: filter.requestor!.map((pair) => pair.value) },
       }),
       ...(filter.titleSubstring && {
@@ -57,7 +57,7 @@ async function getFilteredTickets(filter: ViewConfig) {
     include: [
       {
         association: "diagnoses",
-        ...(filter.diagnoses.length > 0 && {
+        ...(filter.diagnoses?.length > 0 && {
           where: {
             value: {
               [Op.in]: reformedDiagnoses,
@@ -151,6 +151,25 @@ export default {
       res.status(200).json({ message: "Successfully saved view!" });
     });
   },
+  deleteViewConfig: async (req: Request, res: Response) => {
+    const { configId }: { configId: number } = req.body;
+    const user = await User.findOne({
+      where: {
+        username: req.username,
+      },
+      plain: true,
+    });
+
+    if (!user) {
+      res.status(500).json({ error: "Failed to find associated user." });
+      return;
+    }
+
+    user.removeDisplay(configId).then(() => {
+      res.status(200).json({ message: "Successfully saved view!" });
+    });
+  },
+
   fetchViewConfigs: async (req: Request, res: Response) => {
     const user = await User.findOne({
       where: {

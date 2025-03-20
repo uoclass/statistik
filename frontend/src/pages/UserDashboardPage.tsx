@@ -2,19 +2,15 @@
  * Defines the user dashboard page component,
  * a protected page which displays info upon login.
  */
-import { IFormInputs } from "@/components/ViewCreationForm";
 import { useAuth } from "@/provider/AuthProvider";
 import { useState, useEffect } from "react";
-
-interface ViewConfigsResponse {
-  name: string;
-  viewConfigs: Array<IFormInputs>;
-}
+import { CollapsibleItem } from "@/components/CollapsibleItem";
+import type { ConfigData, ViewConfigsResponse } from "@/types";
 
 function UserDashboardPage() {
   const { token } = useAuth();
   const [fullName, setFullName] = useState("");
-  const [savedViews, setSavedViews] = useState<IFormInputs[]>([]);
+  const [savedViews, setSavedViews] = useState<ConfigData[]>([]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/view-configs`, {
@@ -26,8 +22,7 @@ function UserDashboardPage() {
     })
       .then((response) => response.json())
       .then((resData: ViewConfigsResponse) => {
-        console.log(resData.viewConfigs);
-        setSavedViews(resData.viewConfigs);
+        setSavedViews(resData.viewConfigs || []);
         setFullName(resData.name);
       });
   }, [token]);
@@ -41,10 +36,20 @@ function UserDashboardPage() {
           {fullName || <div className="loading-text max-w-40" />}
         </span>
       </h3>
-      <div>
-        {savedViews.map((viewFilter, i) => {
-          return <div key={i}>{JSON.stringify(viewFilter)}</div>;
-        })}
+      <div className="mr-auto pt-8 pr-4">
+        {savedViews?.length === 0 ? (
+          <p className="text-[#888] italic pt-4">No previous views found.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {savedViews?.map((item, index) => (
+              <CollapsibleItem
+                key={index}
+                item={item}
+                viewsState={{ savedViews, setSavedViews }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

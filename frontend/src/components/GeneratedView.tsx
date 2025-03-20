@@ -17,6 +17,8 @@ const GeneratedView = ({
   filter: IFormInputs;
   data: Array<Ticket>;
 }) => {
+  console.log("Rendering GeneratedView with filter:", filter);
+
   // form groupings and return category / bucket name
   const groupedData = Object.groupBy(data, (ticket: Ticket) => {
     switch (filter.grouping) {

@@ -9,10 +9,14 @@ function Nav() {
     <nav className="Nav">
       <ul className="Nav-list">
         <li>
-          <NavLink to="/dashboard">dashboard</NavLink>
+          <NavLink to="/dashboard" state={{ filter: null }}>
+            dashboard
+          </NavLink>
         </li>
         <li>
-          <NavLink to="/new-view">new view</NavLink>
+          <NavLink to="/new-view" state={{ filter: null }}>
+            new view
+          </NavLink>
         </li>
         <li>
           <NavLink to="/settings">settings</NavLink>

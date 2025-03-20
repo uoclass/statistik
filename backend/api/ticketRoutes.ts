@@ -5,6 +5,7 @@ const router = Router();
 
 router.post("/fetch-filtered-tickets", controller.fetchFilteredTickets);
 router.get("/view-configs", controller.fetchViewConfigs);
+router.post("/delete-config", controller.deleteViewConfig);
 router.post("/save-config", controller.saveViewConfig);
 router.get("/buildings", controller.fetchBuildings);
 router.get("/requestors", controller.fetchRequestors);

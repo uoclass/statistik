@@ -1,56 +1,52 @@
 import { Controller, useForm } from "react-hook-form";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "./FormElements.css";
 import Button from "@/components/Button";
 import { ChartColumn } from "lucide-react";
 import { useAuth } from "@/provider/AuthProvider";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { IFormInputs } from "@/types";
+import api from "@/api";
 import StyledMultiSelect from "./MultiSelect";
 
 const Form = ({
+  filter,
   setFilter,
 }: {
+  filter: IFormInputs;
   setFilter: Dispatch<SetStateAction<IFormInputs>>;
 }) => {
   const { token } = useAuth();
-  const [buildingOptions, setBuildingOptions] = useState([
-    {
-      label: "",
-      value: "",
-    },
-  ]);
-  const [requestorOptions, setRequestorOptions] = useState([
-    {
-      label: "",
-      value: "",
-    },
-  ]);
 
-  const [diagnosisOptions, setDiagnosisOptions] = useState([
-    { label: "", value: "" },
-  ]);
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-    formState: { errors },
-  } = useForm<IFormInputs>({
-    defaultValues: {
-      layout: "chart",
-      building: [],
-      requestor: [],
-      diagnoses: [],
+  const defaultOptions = [
+    {
+      value: "",
+      label: "",
     },
+  ];
+
+  const [buildingOptions, setBuildingOptions] = useState(defaultOptions);
+  const [requestorOptions, setRequestorOptions] = useState(defaultOptions);
+  const [diagnosisOptions, setDiagnosisOptions] = useState(defaultOptions);
+
+  const [generateViewMessage, setGenerateViewMessage] = useState({
+    message: "",
+    error: "",
   });
+
+  const { register, handleSubmit, watch, control, setValue } =
+    useForm<IFormInputs>({});
 
   // watches for conditional form rendering
   const watchLayout = watch("layout");
   const watchGrouping = watch("grouping");
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (filter: IFormInputs) => {
-    console.log(filter);
+    // re-navigate to page to clear filter state
+    navigate("/new-view", { replace: true, state: {} });
+
+    // set new filter
     setFilter(filter);
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/save-config`, {
       method: "POST",
@@ -61,26 +57,40 @@ const Form = ({
       body: JSON.stringify({ config: filter }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        setGenerateViewMessage(data);
+        setTimeout(() => {
+          setGenerateViewMessage({ message: "", error: "" });
+        }, 1500);
+      });
   };
 
   useEffect(() => {
-    // set building options based on data found in report
+    // handle missing token
     if (!token) {
       console.log("No token.");
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/buildings`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
+    // on remount, check if current state has a passed in filter
+    if (filter) {
+      // dynamically set filter values
+      setValue("layout", filter.layout);
+      setValue("grouping", filter.grouping);
+      setValue("diagnoses", filter.diagnoses);
+      setValue("requestor", filter.requestor);
+      setValue("building", filter.building);
+      setValue("room", filter.room);
+      setValue("termStart", filter.termStart);
+      setValue("termEnd", filter.termEnd);
+    }
+
+    // populate building options with api call
+    api
+      .getBuildings(token)
       .then((data) => {
-        return data.map((entry: { building: string }) => {
+        // replace any empty strings with "Unspecified Building"
+        const entries = data?.map((entry: { building: string }) => {
           if (entry.building === "") {
             return {
               value: "",
@@ -89,53 +99,40 @@ const Form = ({
           }
           return { value: entry.building, label: entry.building };
         });
+
+        return entries;
       })
       .then((options) => setBuildingOptions(options));
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/diagnoses`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return data.map((entry: { value: string }) => {
-          return { value: entry.value, label: entry.value };
-        });
-      })
-      .then((options) => setDiagnosisOptions(options));
+    // populate diagnosis options with api call
+    api.getDiagnoses(token).then((options) => {
+      setDiagnosisOptions(options);
+    });
+
     // fetch and set requestor options
-    fetch(`${import.meta.env.VITE_API_URL}/api/tickets/requestors`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return data.map((entry: { requestor: string }) => {
-          return { value: entry.requestor, label: entry.requestor };
-        });
-      })
-      .then((options) => setRequestorOptions(options));
-  }, [token]);
+    api.getRequestors(token).then((options) => {
+      setRequestorOptions(options);
+    });
+  }, [token, filter, setValue]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleFormSubmit)}>
-      <Button type="submit">
-        Generate view
-        <ChartColumn width={22} />
-      </Button>
+      <div className="flex flex-row items-center">
+        <Button type="submit">
+          Generate view
+          <ChartColumn width={22} />
+        </Button>
+        <span className="text-sm ml-1" hidden={!generateViewMessage}>
+          {generateViewMessage?.message || generateViewMessage?.error}
+        </span>
+      </div>
+
       <div
         className="grid grid-cols-2 gap-2 min-w-[400px] [&_select]:bg-light-gray
         [&_input]:bg-light-gray [&_input]:px-2 [&_select]:h-8 [&_input]:h-8 [&_label]:pt-2"
       >
         <div id="display-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Display</h3>
-          <hr className="my-1" />
           <label htmlFor="layout">Layout</label>
           <select {...register("layout")}>
             <option value="chart">Chart</option>
@@ -153,7 +150,6 @@ const Form = ({
         </div>
         <div id="filter-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Filters</h3>
-          <hr className="my-1" />
           <label htmlFor="termStart">Term Start</label>
           <input
             type="date"

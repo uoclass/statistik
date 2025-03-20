@@ -143,7 +143,7 @@ function LoginPage() {
         <Label className="error-label">{passwordError}</Label>
       </div>
       <Button type="button" onClick={onButtonClick}>
-        Login
+        Sign in
       </Button>
     </>
   );

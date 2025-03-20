@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Button from "./Button";
 import "./Callout.css";
 import Icon from "@/components/Icons";
+import api from "@/api";
 
 function formatUnixTime(unixTime: number) {
   const date = new Date(unixTime);
@@ -36,24 +37,10 @@ function ReportCacheStatusCallout() {
   };
 
   useEffect(() => {
-    async function fetchRefreshTime() {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/tickets/report-cache-generation-time`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const result = await response.json();
-      console.log(result.timestamp);
-      return formatUnixTime(result.timestamp);
-    }
-    fetchRefreshTime().then((timestamp) => {
-      setReportCacheGenTime(timestamp ? timestamp : "");
+    // Fetch report generation time
+    api.getReportGenerationTime(token).then((data) => {
+      const timestamp = formatUnixTime(data.timestamp);
+      setReportCacheGenTime(timestamp || "");
     });
   }, [token, reportCacheGenTime]);
 

@@ -37,6 +37,7 @@ export const authenticationMiddleware = (
 
   jwt.verify(token, secret, (error, decoded) => {
     if (error) {
+      console.error(error);
       res.status(403).json({ message: "Invalid token." });
       return;
     }
@@ -56,22 +57,20 @@ export default {
 
     let failed: boolean = false;
 
-    await User.findOne({
+    const user = await User.findOne({
       where: { username: email },
-    }).then((user) => {
-      if (!user) {
-        failed = true;
-        res.status(401).send({ error: "Authentication Failed" });
-      }
-
-      const passwordIsValid = compareSync(password, user?.password!);
-      if (!passwordIsValid) {
-        failed = true;
-        res.status(401).send({ error: "Authentication Failed" });
-      }
     });
 
-    if (failed) {
+    if (!user) {
+      failed = true;
+      res.status(401).send({ error: "Authentication Failed" });
+      return;
+    }
+
+    const passwordIsValid = compareSync(password, user?.password!);
+    if (!passwordIsValid) {
+      failed = true;
+      res.status(401).send({ error: "Authentication Failed" });
       return;
     }
 
@@ -86,6 +85,7 @@ export default {
       });
       return;
     }
+
     res.status(200).send({ message: "Successful login.", token: token });
     return;
   },

@@ -43,8 +43,21 @@ export interface Ticket {
   diagnoses: [];
 }
 
+export type ViewGroupings =
+  | "none"
+  | "week"
+  | "requestor"
+  | "building"
+  | "room"
+  | "diagnoses";
+
+export type OptionItem = {
+  value: string;
+  label: string;
+};
+
 export interface IFormInputs {
-  grouping: "none" | "week" | "requestor" | "building" | "room" | "diagnoses";
+  grouping: ViewGroupings;
   layout: "list" | "chart";
   termStart?: string | null;
   termEnd?: string | null;
@@ -67,4 +80,20 @@ export interface ConfigData {
 export interface ViewConfigsResponse {
   name: string;
   viewConfigs: Array<ConfigData>;
+}
+
+export interface ViewItem {
+  id: number;
+  userId: number;
+  viewConfig: IFormInputs;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CollapsibleItemProps {
+  item: ViewItem;
+  viewsState: {
+    savedViews: Array<ViewItem>;
+    setSavedViews(views: Array<ViewItem>): void;
+  };
 }
