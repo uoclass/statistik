@@ -96,8 +96,14 @@ const customStyles = {
     "&:hover": {
       border: "0px solid black",
     },
-    padding: "2px",
+    minHeight: "0px",
+    padding: "0px",
     fontFamily: "Helvetica, Arial, sans-serif",
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: "0px 8px",
+    backgroundColor: "transparent",
   }),
   menu: (base) => ({
     ...base,

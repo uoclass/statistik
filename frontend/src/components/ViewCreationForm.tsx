@@ -129,7 +129,7 @@ const Form = ({
 
       <div
         className="grid grid-cols-2 gap-2 min-w-[400px] [&_select]:bg-light-gray
-        [&_input]:bg-light-gray [&_input]:px-2 [&_select]:h-8 [&_input]:h-8 [&_label]:pt-2"
+        [&_input]:bg-light-gray [&_input]:px-2 [&_select]:px-2 [&_select]:h-[40px] [&_input]:h-[40px] [&_label]:pt-2"
       >
         <div id="display-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Display</h3>
