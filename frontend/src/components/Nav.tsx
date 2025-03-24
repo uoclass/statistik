@@ -19,9 +19,6 @@ function Nav() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/settings">settings</NavLink>
-        </li>
-        <li>
           <NavLink to="/user-guide">user guide</NavLink>
         </li>
         <li>

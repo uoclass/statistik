@@ -135,7 +135,9 @@ export const CollapsibleItem: React.FC<CollapsibleItemProps> = ({
                   <span className="label">Buildings:</span>
                   <span>
                     {item.viewConfig.building?.length
-                      ? item.viewConfig.building.join(", ")
+                      ? item.viewConfig.building
+                          .map((building) => building.label)
+                          .join(", ")
                       : "—"}
                   </span>
                 </div>

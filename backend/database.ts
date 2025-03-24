@@ -33,7 +33,7 @@ if (SEED_DATA) {
   await User.findOrCreate({
     where: {
       username: process.env.SEED_USERNAME,
-      fullName: "Eric Edwards",
+      fullName: "John Doe",
       password: hashedPass,
     },
   });

@@ -1,7 +1,7 @@
-const DropdownIndicator = (props) => {
+const DropdownIndicator = ({ ...props }) => {
   return (
     <div
-      {...props.innerProps}
+      {...props}
       style={{
         display: "flex",
         alignItems: "center",
@@ -25,9 +25,13 @@ const DropdownIndicator = (props) => {
 };
 
 // Custom multi-value container
-const MultiValueContainer = ({ children, ...props }) => {
+const MultiValueContainer = ({
+  children,
+  ...props
+}: React.PropsWithChildren<unknown>) => {
   return (
     <div
+      {...props}
       style={{
         display: "flex",
         backgroundColor: "#27272A",

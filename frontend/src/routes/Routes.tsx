@@ -21,6 +21,7 @@ import ViewCreationPage from "../pages/ViewCreationPage";
 import Layout from "../components/Layout";
 import ConditionalRoute from "./ConditionalRoute";
 import ProtectedRouteError from "../components/ProtectedRouteError";
+import UserGuidePage from "@/pages/UserGuidePage";
 
 function Routes() {
   // route configurations go here
@@ -63,6 +64,10 @@ function Routes() {
     {
       path: "/ipsum",
       element: <IpsumPage />,
+    },
+    {
+      path: "/user-guide",
+      element: <UserGuidePage />,
     },
     {
       path: "/invalid",

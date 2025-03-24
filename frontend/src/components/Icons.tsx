@@ -4,6 +4,29 @@ import { JSX } from "react/jsx-runtime";
 const Icon: React.FC<IconProps> = ({ icon, width, color, className }) => {
   const icon_color: string | null = color || "currentColor";
   const icons: { [key: string]: JSX.Element } = {
+    expand: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-expand"
+      >
+        <path d="m15 15 6 6" />
+        <path d="m15 9 6-6" />
+        <path d="M21 16.2V21h-4.8" />
+        <path d="M21 7.8V3h-4.8" />
+        <path d="M3 16.2V21h4.8" />
+        <path d="m3 21 6-6" />
+        <path d="M3 7.8V3h4.8" />
+        <path d="M9 9 3 3" />
+      </svg>
+    ),
     user: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
