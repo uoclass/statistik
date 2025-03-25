@@ -72,7 +72,7 @@ const GeneratedView = ({
   return (
     <Card>
       <CardTitle>Generated View</CardTitle>
-      <CardDescription>
+      <CardDescription className="black">
         Ticket
         {filter?.grouping !== "none" ? ` quantity by ${filter.grouping}` : "s"}
       </CardDescription>
@@ -97,7 +97,7 @@ const GeneratedView = ({
               axisLine={false}
               width={150}
             />
-            <Bar dataKey="quantity" fill="#FF0000" radius={0}>
+            <Bar dataKey="quantity" fill="#e00000" radius={0}>
               <LabelList
                 dataKey="quantity"
                 position="right"

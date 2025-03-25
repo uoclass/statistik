@@ -32,7 +32,7 @@ function UserDashboardPage() {
       <h1>Dashboard</h1>
       <h3>
         Welcome,{" "}
-        <span className="text-red-500">
+        <span className="text-[#e00000]">
           {fullName || <div className="loading-text max-w-40" />}
         </span>
       </h3>

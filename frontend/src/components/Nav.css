@@ -13,20 +13,22 @@
 }
 
 .Nav-list li {
-    display: inline-block;
     padding-right: 15px;
+    padding: 5px 0px 0px 0px;
+    display: inline;
+    margin-right: 20px;
 }
 
 .Nav-list a {
-    color: #aaaaaa;
+    color: #707070;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .Nav-list a:hover {
-    color: #666666;
+    color: #aaaaaa;
 }
 
 .Nav-list a.active {
-    color: red;
+    color: #e00000;
 }
