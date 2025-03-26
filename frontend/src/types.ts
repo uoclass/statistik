@@ -40,7 +40,7 @@ export interface Ticket {
   status: "Open" | "Closed";
   createdAt: Date;
   updatedAt: Date;
-  diagnoses: [];
+  diagnoses: Array<{ value: string; label: string }>;
 }
 
 export type ViewGroupings =

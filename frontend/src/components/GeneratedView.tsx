@@ -17,10 +17,22 @@ const GeneratedView = ({
   filter: IFormInputs;
   data: Array<Ticket>;
 }) => {
-  console.log("Rendering GeneratedView with filter:", filter);
+  // get diagnosis count
 
+  let diagnosisCount: Record<string, Ticket[]> = {};
+  if (filter.grouping === "diagnoses") {
+    diagnosisCount = data.reduce((acc, ticket) => {
+      for (const diagnosis of ticket.diagnoses) {
+        if (!acc[diagnosis.value]) {
+          acc[diagnosis.value] = [];
+        }
+        acc[diagnosis.value].push(ticket);
+      }
+      return acc;
+    }, diagnosisCount);
+  }
   // form groupings and return category / bucket name
-  const groupedData = Object.groupBy(data, (ticket: Ticket) => {
+  let groupedData = Object.groupBy(data, (ticket: Ticket) => {
     switch (filter.grouping) {
       case "week":
         return getWeekBucket(
@@ -38,6 +50,9 @@ const GeneratedView = ({
     }
   });
 
+  if (filter.grouping === "diagnoses") {
+    groupedData = diagnosisCount;
+  }
   // translate into chartable format
   const translateData = (data: Partial<Record<string, Ticket[]>>) => {
     return Object.entries(data).map(([groupName, tickets]) => {

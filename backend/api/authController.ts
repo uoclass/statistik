@@ -51,7 +51,6 @@ export const authenticationMiddleware = (
 
 export default {
   login: async (req: Request, res: Response) => {
-    console.log(req);
     const { email, password } = req.body;
     // console.log(`${email} / ${password}`);
 

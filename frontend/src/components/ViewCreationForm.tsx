@@ -133,12 +133,12 @@ const Form = ({
       >
         <div id="display-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Display</h3>
-          <label htmlFor="layout">Layout</label>
+          <label>Layout</label>
           <select {...register("layout")}>
             <option value="chart">Chart</option>
             <option value="list">List</option>
           </select>
-          <label htmlFor="grouping">Grouping</label>
+          <label>Grouping</label>
           <select {...register("grouping")}>
             <option value="building">Building</option>
             <option value="week">Week</option>
@@ -150,17 +150,17 @@ const Form = ({
         </div>
         <div id="filter-options" className="form-group flex flex-col">
           <h3 className="justify-self-center pt-3 mb-0">Filters</h3>
-          <label htmlFor="termStart">Term Start</label>
+          <label>Term Start</label>
           <input
             type="date"
             {...register("termStart")}
             required={watchGrouping === "week"}
           />
-          <label htmlFor="termEnd">Term End</label>
+          <label>Term End</label>
           <input type="date" {...register("termEnd")} />
           {watchGrouping !== "building" && (
             <>
-              <label htmlFor="building">Building</label>
+              <label>Building</label>
               <Controller
                 name="building"
                 control={control}
@@ -172,13 +172,13 @@ const Form = ({
           )}
           {watchGrouping !== "building" && watchGrouping !== "room" && (
             <>
-              <label htmlFor="room">Room</label>
+              <label>Room</label>
               <input {...register("room")} />
             </>
           )}
           {watchGrouping !== "requestor" && (
             <>
-              <label htmlFor="requestor">Requestor</label>
+              <label>Requestor</label>
 
               <Controller
                 name="requestor"
@@ -191,13 +191,13 @@ const Form = ({
           )}
           {watchLayout === "list" && (
             <>
-              <label htmlFor="titleSubstring">Title Search</label>
+              <label>Title Search</label>
               <input {...register("titleSubstring")} />
             </>
           )}
           {watchGrouping !== "diagnoses" && (
             <>
-              <label htmlFor="diagnoses">Diagnoses</label>
+              <label>Diagnoses</label>
               <Controller
                 name="diagnoses"
                 control={control}

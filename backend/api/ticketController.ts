@@ -187,7 +187,6 @@ export default {
     const fullName = user.dataValues.fullName;
 
     console.log(fullName);
-    console.log(viewConfigs);
 
     res.status(200).json({
       name: user.dataValues.fullName,
@@ -199,7 +198,6 @@ export default {
       "SELECT DISTINCT location AS building FROM Tickets",
       { type: QueryTypes.SELECT },
     );
-    console.log(results);
     res.status(200).json(results);
     return;
   },

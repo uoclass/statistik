@@ -81,7 +81,6 @@ export const CollapsibleItem: React.FC<CollapsibleItemProps> = ({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (!data.error) {
           console.log("Successfully deleted view.");
         } else {

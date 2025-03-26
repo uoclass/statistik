@@ -14,11 +14,9 @@ export const ProtectedRoute = () => {
   // check if user is authenticated
   if (!token) {
     // not authenticated, go back to login page
-    console.log("ProtectedRoute: tried to access but unauthorized, rerouting to invalid, token is ", token);
     return <Navigate to="/invalid" />;
   }
 
   // render the child routes
-  console.log("ProtectedRoute: authenticated, forwarding to outlet, token is ", token);
   return <Outlet />;
 };

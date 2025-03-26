@@ -54,7 +54,6 @@ function LoginPage() {
     // NOTE could add an api endpoint and check here for whether an account exists
 
     handleLogin();
-    console.log("Reached the end of the onButtonClick function");
   };
 
   const validateToken = async (token: string) => {
@@ -74,7 +73,6 @@ function LoginPage() {
       );
       const data = await response.json();
       if (data.message === "valid token") {
-        console.log("Token is valid");
         return true;
       }
     } catch (error) {
@@ -84,9 +82,6 @@ function LoginPage() {
   };
 
   const handleLogin = () => {
-    console.log(
-      `Sending login request to ${import.meta.env.VITE_API_URL}/api/auth/login`,
-    );
     fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
       method: "POST",
       headers: {
