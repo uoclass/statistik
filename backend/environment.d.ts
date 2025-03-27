@@ -13,8 +13,10 @@ declare global {
       SERVER_PORT: number;
       SEED_USERNAME: string;
       SEED_PASSWORD: string;
+      SEED_FULLNAME: string;
+      SEED_MODE_ON: boolean;
     }
   }
 }
 
-export {};
+export { };

@@ -24,7 +24,7 @@ const sequelize = new Sequelize({
 });
 
 /* SEED DATA */
-const SEED_DATA = false;
+const SEED_DATA = process.env.SEED_MODE_ON;
 await sequelize.sync();
 
 if (SEED_DATA) {
@@ -33,7 +33,7 @@ if (SEED_DATA) {
   await User.findOrCreate({
     where: {
       username: process.env.SEED_USERNAME,
-      fullName: "John Doe",
+      fullName: process.env.SEED_FULLNAME,
       password: hashedPass,
     },
   });
