@@ -11,7 +11,7 @@ import sequelize from "./database.ts";
 /* Routes */
 import ticketRoutes from "./api/ticketRoutes.ts";
 import authRoutes from "./api/authRoutes.ts";
-import { authenticationMiddleware } from "api/authController.ts";
+import { authenticationMiddleware } from "./api/authController.ts";
 
 /* Middleware Setup */
 const app = express();

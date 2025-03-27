@@ -6,8 +6,8 @@ import dotenv from "dotenv";
 /* Models */
 import { Ticket } from "./models/ticket.model.ts";
 import { User } from "./models/user.model.ts";
-import { Diagnosis } from "models/diagnosis.model.ts";
-import { Display, ViewConfig } from "models/display.model.ts";
+import { Diagnosis } from "./models/diagnosis.model.ts";
+import { Display, type ViewConfig } from "./models/display.model.ts";
 
 dotenv.config({ path: "./.env.local" });
 

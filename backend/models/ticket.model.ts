@@ -2,12 +2,12 @@ import {
   Sequelize,
   Model,
   DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  CreationOptional,
-  NonAttribute,
-  BelongsToManySetAssociationsMixin,
-  BelongsToManyGetAssociationsMixin,
+  type InferAttributes,
+  type InferCreationAttributes,
+  type CreationOptional,
+  type NonAttribute,
+  type BelongsToManySetAssociationsMixin,
+  type BelongsToManyGetAssociationsMixin,
 } from "@sequelize/core";
 import { Attribute, BelongsToMany } from "@sequelize/core/decorators-legacy";
 
