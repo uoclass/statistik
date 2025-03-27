@@ -1,7 +1,9 @@
 import {
-  Sequelize,
   Model,
   DataTypes,
+} from "@sequelize/core";
+
+import type {
   InferAttributes,
   InferCreationAttributes,
   NonAttribute,

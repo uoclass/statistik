@@ -1,21 +1,17 @@
-import { Ticket, TicketFieldsType } from "../models/ticket.model.ts";
-import { type ViewConfig } from "models/display.model.ts";
-import { Diagnosis } from "models/diagnosis.model.ts";
+import { Ticket } from "../models/ticket.model.ts";
+import { type ViewConfig } from "../models/display.model.ts";
+import { Diagnosis } from "../models/diagnosis.model.ts";
 import sequelize from "../database.ts";
 import dotenv from "dotenv";
 import { Op, QueryTypes } from "@sequelize/core";
-import { Request, Response } from "express";
-import { User } from "models/user.model.ts";
+import type { Request, Response } from "express";
+import { User } from "../models/user.model.ts";
 
 dotenv.config({ path: "../.env.local" });
 
-interface LoginRequestParams {
-  email: string;
-  password: string;
-}
-
-function ValidateTicketFilter(filter: ViewConfig) {
-  return;
+interface ReportData {
+  DataRows: Array<any>;
+  error: any;
 }
 
 async function getFilteredTickets(filter: ViewConfig) {
@@ -23,18 +19,6 @@ async function getFilteredTickets(filter: ViewConfig) {
   if (filter.diagnoses) {
     reformedDiagnoses = filter.diagnoses.map((pair) => pair.value);
   }
-
-  const {
-    grouping,
-    termStart,
-    termEnd,
-    building,
-    requestor,
-    diagnoses,
-    room,
-    titleSubstring,
-    matchAllDiagnoses,
-  } = filter;
 
   // get list of group names
   return await Ticket.findAll({
@@ -230,7 +214,7 @@ export default {
     return;
   },
   fetchNewTicketReport: async (req: Request, res: Response) => {
-    const data = await _fetchNewTicketReport();
+    const data = await _fetchNewTicketReport() as ReportData;
 
     if (data.error) {
       res.status(400).json(data);
@@ -241,9 +225,9 @@ export default {
     return;
   },
   refreshReport: async (req: Request, res: Response) => {
-    const data = await _fetchNewTicketReport();
+    const data = await _fetchNewTicketReport() as ReportData;
 
-    const { DataRows, DisplayedColumns } = data;
+    const { DataRows } = data;
 
     await Ticket.destroy({ where: {} }).then((result) => console.log(result));
 

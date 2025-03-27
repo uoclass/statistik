@@ -1,9 +1,9 @@
 import { User } from "../models/user.model.ts";
-import sequelize from "../database.ts";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { compareSync } from "bcrypt-ts";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+import type { JwtPayload, VerifyErrors } from "jsonwebtoken";
 
 dotenv.config({ path: "../.env.local" });
 const secret: string = process.env.JWT_PRIV_KEY;
@@ -94,16 +94,16 @@ export default {
     const token = req.body.token;
 
     // verify the JWT token
-    jwt.verify(token, secret, (err, decoded) => {
+    jwt.verify(token, secret, (error: VerifyErrors | null, decoded: JwtPayload | string | undefined) => {
       // here 'decoded' is the payload of the JWT token after verification
-      if (err) {
+      if (error) {
         return res.status(403).send({ error: "Invalid JWT token" });
       }
 
       // sending back the username means it's valid and proves we know the user
       return res.status(200).send({
         message: "valid token",
-        username: decoded.username,
+        username: (decoded as { username: string }).username,
       });
     });
   },

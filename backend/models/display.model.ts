@@ -1,11 +1,14 @@
 import {
   Model,
   DataTypes,
+} from "@sequelize/core";
+
+import type {
   InferAttributes,
   InferCreationAttributes,
-  NonAttribute,
   CreationOptional,
 } from "@sequelize/core";
+
 import {
   NotNull,
   Attribute,
