@@ -27,22 +27,22 @@ function IpsumPage() {
     status: "Closed",
     createdAt: new Date("2025-02-11T19:06:53.483Z"),
     updatedAt: new Date("2025-02-11T19:06:53.483Z"),
-    diagnoses: [
-      {
-        id: 70,
-        value: "HyFlex/Room Camera",
-        createdAt: new Date("2025-02-05T23:19:30.500Z"),
-        updatedAt: new Date("2025-02-05T23:19:30.500Z"),
-        MarkedDiagnoses: {
-          createdAt: new Date("2025-02-11T19:06:53.484Z"),
-          updatedAt: new Date("2025-02-11T19:06:53.484Z"),
-          diagnosisId: 70,
-          ticketId: 7106,
-        },
-      },
-    ],
+    diagnoses: []
+      // {
+      //   id: 70,
+      //   value: "HyFlex/Room Camera",
+      //   createdAt: new Date("2025-02-05T23:19:30.500Z"),
+      //   updatedAt: new Date("2025-02-05T23:19:30.500Z"),
+      //   MarkedDiagnoses: {
+      //     createdAt: new Date("2025-02-11T19:06:53.484Z"),
+      //     updatedAt: new Date("2025-02-11T19:06:53.484Z"),
+      //     diagnosisId: 70,
+      //     ticketId: 7106,
+      //   },
+      // },
+    // ],
   };
-  return <TicketListItem {...ticket} />;
+  return <TicketListItem ticket={ticket} />;
 }
 
 export default IpsumPage;

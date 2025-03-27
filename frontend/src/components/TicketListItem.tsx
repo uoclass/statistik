@@ -1,9 +1,19 @@
 import Icon from "./Icons";
 import type { Ticket } from "@/types";
 
-const TicketListItem = ({ ...ticket }) => {
+const ticket_url_start = "https://service.uoregon.edu/TDNext/Apps/430/Tickets/TicketDet.aspx?TicketID=";
+
+const get_ticket_info_string = (ticket: Ticket) => {
+  return `${ticket.title}\nTicket ID:${ticket.ticket_id}\nRequestor: ${ticket.requestor}\nLocation: ${ticket.location} ${ticket.room}\nCreated: ${new Date(ticket.created).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  })}\nDiagnoses: ${(ticket.diagnoses.length ? ticket.diagnoses.map((d) => d.value).join(", ") : "None")}\nURL: ${ticket_url_start}${ticket.ticket_id}`;  
+}
+
+const TicketListItem = ({ticket}: {ticket: Ticket}) => {
   return (
-    <div className="text-base bg-neutral-100 p-4">
+    <div className="my-3 text-base bg-neutral-200 p-4">
       {/* Title */}
       <h2 className="text-2xl! font-semibold mb-2">{ticket.title}</h2>
 
@@ -30,7 +40,7 @@ const TicketListItem = ({ ...ticket }) => {
       <div className="mb-1 flex items-center">
         <Icon width={24} className="mr-2" icon="time" />
         <span>
-          {ticket.created.toLocaleDateString("en-US", {
+          {new Date(ticket.created).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "2-digit",
@@ -50,8 +60,8 @@ const TicketListItem = ({ ...ticket }) => {
       <div className="mt-1 flex justify-between items-center">
         {/* Copy ticket info button */}
         <button
-          className="px-3 flex items-center py-1 text-neutral-400 hover:text-neutral-500"
-          onClick={() => navigator.clipboard.writeText(ticket.title)}
+          className="px-3 flex items-center py-1 text-neutral-500 hover:text-neutral-600"
+          onClick={() => navigator.clipboard.writeText(get_ticket_info_string(ticket))}
         >
           <Icon width={20} className="mr-2" icon="copy" />
           <span className="text-base">Copy ticket info</span>
@@ -59,14 +69,17 @@ const TicketListItem = ({ ...ticket }) => {
 
         <span className="flex items-center">
           {/* Copy link button */}
-          <button className="flex items-center gap-2 px-2 mx-0 py-1 bg-neutral-200 text-neutral-400 hover:bg-neutral-300 hover:text-neutral-500 text-sm">
+          <button
+            className="flex items-center gap-2 px-2 mx-0 py-1 bg-neutral-300 text-neutral-500 hover:bg-neutral-300 hover:text-neutral-600 text-sm"
+            onClick={() => navigator.clipboard.writeText(`${ticket_url_start}${ticket.ticket_id}`)}
+          >
             <Icon width={24} className="mr-2" icon="link" />
           </button>
 
           {/* Open in TeamDynamix button */}
           <button
             className="flex items-center gap-2 px-4 mx-0 py-1 bg-neutral-700 text-white hover:bg-neutral-600 text-sm"
-            onClick={() => window.open(ticket.webUrl, "_blank")}
+            onClick={() => window.open(`${ticket_url_start}${ticket.ticket_id}`, "_blank")}
           >
             Open in TeamDynamix
             <Icon width={24} className="mr-2" color="white" icon="open" />

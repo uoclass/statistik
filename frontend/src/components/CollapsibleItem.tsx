@@ -158,10 +158,12 @@ export const CollapsibleItem: React.FC<CollapsibleItemProps> = ({
                     : "—"}
                 </span>
               </div>
-              <div className="content-row">
-                <span className="label">Match All:</span>
-                <span>{item.viewConfig.matchAllDiagnoses ? "Yes" : "No"}</span>
-              </div>
+              {/*
+                <div className="content-row">
+                  <span className="label">Match All:</span>
+                  <span>{item.viewConfig.matchAllDiagnoses ? "Yes" : "No"}</span>
+                </div>
+              */}
               <div className="content-row">
                 <span className="label">Requestors:</span>
                 <span>

@@ -41,7 +41,7 @@ function UserDashboardPage() {
           <p className="text-[#888] italic pt-4">No previous views found.</p>
         ) : (
           <div className="flex flex-col gap-2">
-            {savedViews?.map((item, index) => (
+            {savedViews?.toReversed().map((item, index) => (
               <CollapsibleItem
                 key={index}
                 item={item}

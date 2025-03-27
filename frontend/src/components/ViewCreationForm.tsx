@@ -34,7 +34,7 @@ const Form = ({
     error: "",
   });
 
-  const { register, handleSubmit, watch, control, setValue } =
+  const { register, handleSubmit, resetField, watch, control, setValue } =
     useForm<IFormInputs>({});
 
   // watches for conditional form rendering
@@ -42,11 +42,32 @@ const Form = ({
   const watchGrouping = watch("grouping");
   const navigate = useNavigate();
 
+  /* Clear out the field that is being grouped by
+   */
+  const clearFieldBeingGrouped = (filter: IFormInputs) => {
+    // clear field being grouped
+    if (filter.grouping === "building") {
+      filter.building = [];
+      resetField("room");
+    } else if (filter.grouping === "room") {
+      filter.room = "";
+      filter.building = [];
+      resetField("building");
+    } else if (filter.grouping === "requestor") {
+      filter.requestor = [];
+      resetField("requestor");
+    } else if (filter.grouping === "diagnoses") {
+      filter.diagnoses = [];
+      resetField("diagnoses");
+    }
+  }
+
   const handleFormSubmit = async (filter: IFormInputs) => {
     // re-navigate to page to clear filter state
     navigate("/new-view", { replace: true, state: {} });
 
     // set new filter
+    clearFieldBeingGrouped(filter);
     setFilter(filter);
     fetch(`${import.meta.env.VITE_API_URL}/api/tickets/save-config`, {
       method: "POST",
@@ -189,12 +210,16 @@ const Form = ({
               />
             </>
           )}
-          {watchLayout === "list" && (
-            <>
-              <label>Title Search</label>
-              <input {...register("titleSubstring")} />
-            </>
-          )}
+          {
+            /*
+              watchLayout === "list" && (
+              <>
+                <label>Title Search</label>
+                <input {...register("titleSubstring")} />
+              </>
+            )
+            */
+          }
           {watchGrouping !== "diagnoses" && (
             <>
               <label>Diagnoses</label>
@@ -207,21 +232,24 @@ const Form = ({
               />
             </>
           )}
-          {watchGrouping !== "diagnoses" && (
-            <>
-              <label className="cursor-pointer">
-                <span>
-                  Only include tickets with <strong>ALL</strong> tagged
-                  diagnoses:
-                </span>
-                <input
-                  className="mx-1 place-self-center accent-red-500"
-                  type="checkbox"
-                  {...register("matchAllDiagnoses")}
-                />
-              </label>
-            </>
-          )}
+          {
+            /* watchGrouping !== "diagnoses" && (
+              <>
+                <label className="cursor-pointer">
+                  <span>
+                    Only include tickets with <strong>ALL</strong> tagged
+                    diagnoses:
+                  </span>
+                  <input
+                    className="mx-1 place-self-center accent-red-500"
+                    type="checkbox"
+                    {...register("matchAllDiagnoses")}
+                  />
+                </label>
+              </>
+          )
+              */
+              }
         </div>
       </div>
     </form>

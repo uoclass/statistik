@@ -9,50 +9,77 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { getWeekBucket } from "@/lib/viewUtils";
+import TicketList from "./TicketList";
+
+/* Organize ticket data into groups based on selected grouping in filter
+ * This is needed for getting counts per group (chart view) and for getting the groupings themselves (list view)
+ * Output is something like {"group name": [ticket1, ticket2, ...], "group name2": [ticket3, ticket4, ...], etc.}
+ */
+const organizeIntoGroups = (data: Array<Ticket>, filter: IFormInputs) => {
+  if (filter.grouping === "diagnoses") {
+    let diagnosesCount: Record<string, Ticket[]> = {};
+    if (filter.grouping === "diagnoses") {
+      diagnosesCount = data.reduce((acc, ticket) => {
+        for (const diagnosis of ticket.diagnoses) {
+          if (!acc[diagnosis.value]) {
+            acc[diagnosis.value] = [];
+          }
+          acc[diagnosis.value].push(ticket);
+        }
+        return acc;
+      }, diagnosesCount);
+    }
+    return diagnosesCount;
+  } else {
+    return Object.groupBy(data, (ticket: Ticket) => {
+      switch (filter.grouping) {
+        case "week":
+          return getWeekBucket(
+            new Date(ticket.created!),
+            new Date(filter.termStart!),
+          );
+        case "building":
+          return ticket.location;
+        case "requestor":
+          return ticket.requestor;
+        case "room":
+          return `${ticket.location || "Unspecified Building"} ${ticket.room}`;
+        default:
+          return ticket.location;
+  }
+})}};
 
 const GeneratedView = ({
+  filter,
+  data
+} : {
+  filter: IFormInputs;
+  data: Array<Ticket>;
+}) => {
+  if (filter.layout === "chart") {
+    return <ChartView filter={filter} data={data} />;
+  } else if (filter.layout === "list") {
+    const groupedData = organizeIntoGroups(data, filter);
+   return <TicketList grouped_ticket_data={groupedData} />;
+  } else {
+    return (
+      <div>
+        <h1>Invalid Layout</h1>
+      </div>
+    );
+  }
+};
+
+const ChartView = ({
   filter,
   data,
 }: {
   filter: IFormInputs;
   data: Array<Ticket>;
 }) => {
-  // get diagnosis count
-
-  let diagnosisCount: Record<string, Ticket[]> = {};
-  if (filter.grouping === "diagnoses") {
-    diagnosisCount = data.reduce((acc, ticket) => {
-      for (const diagnosis of ticket.diagnoses) {
-        if (!acc[diagnosis.value]) {
-          acc[diagnosis.value] = [];
-        }
-        acc[diagnosis.value].push(ticket);
-      }
-      return acc;
-    }, diagnosisCount);
-  }
-  // form groupings and return category / bucket name
-  let groupedData = Object.groupBy(data, (ticket: Ticket) => {
-    switch (filter.grouping) {
-      case "week":
-        return getWeekBucket(
-          new Date(ticket.created!),
-          new Date(filter.termStart!),
-        );
-      case "building":
-        return ticket.location;
-      case "requestor":
-        return ticket.requestor;
-      case "room":
-        return `${ticket.location || "Unspecified Building"} ${ticket.room}`;
-      default:
-        return ticket.location;
-    }
-  });
-
-  if (filter.grouping === "diagnoses") {
-    groupedData = diagnosisCount;
-  }
+  // form groupings
+  let groupedData = organizeIntoGroups(data, filter);
+  
   // translate into chartable format
   const translateData = (data: Partial<Record<string, Ticket[]>>) => {
     return Object.entries(data).map(([groupName, tickets]) => {

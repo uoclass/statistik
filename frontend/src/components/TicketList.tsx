@@ -1,89 +1,52 @@
 import Icon from "./Icons";
 import type { Ticket } from "@/types";
+import TicketListItem from "./TicketListItem";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
-const TicketListItem = ({ ...ticket }: Ticket) => {
+
+/* TicketListSection component
+ * This component is used to display a list of tickets grouped into a single category.
+ * The expectation is that all ticket objects in ticket_data are of the group in group_name.
+*/
+const TicketListSection = (
+  {
+    group_name,
+    ticket_data
+  }: {
+    group_name: string;
+    ticket_data: Array<Ticket>;
+  }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleOpen = () => {
+      setIsOpen(!isOpen);
+    };
   return (
-    <div className="text-base bg-neutral-100 p-4">
-      {/* Title */}
-      <h2 className="text-2xl! font-semibold mb-2">{ticket.title}</h2>
-
-      {/* Requestor */}
-      <div className="mb-1 flex items-center">
-        <Icon width={24} className="mr-2" icon="user" />
-        <a
-          href={`mailto:${ticket.email}`}
-          className="text-blue-600 hover:underline"
-        >
-          {ticket.requestor}
-        </a>
-      </div>
-
-      {/* Location */}
-      <div className="mb-1 flex items-center">
-        <Icon width={24} className="mr-2" icon="location" />
-        <span>
-          {ticket.location} {ticket.room}
-        </span>
-      </div>
-
-      {/* Time Created */}
-      <div className="mb-1 flex items-center">
-        <Icon width={24} className="mr-2" icon="time" />
-        <span>
-          {ticket.created.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-          })}
-        </span>
-      </div>
-
-      {/* Diagnoses */}
-      {ticket.diagnoses.length > 0 && (
-        <div className="mb-1 flex items-center">
-          <Icon width={24} className="mr-2" icon="diagnoses" />
-          <span>{ticket.diagnoses.map((d) => d.value).join(", ")}</span>
-        </div>
-      )}
-
-      {/* Buttons */}
-      <div className="mt-1 flex justify-between items-center">
-        {/* Copy ticket info button */}
-        <button
-          className="px-3 flex items-center py-1 text-neutral-400 hover:text-neutral-500"
-          onClick={() => navigator.clipboard.writeText(ticket.title)}
-        >
-          <Icon width={20} className="mr-2" icon="copy" />
-          <span className="text-base">Copy ticket info</span>
-        </button>
-
-        <span className="flex items-center">
-          {/* Copy link button */}
-          <button className="flex items-center gap-2 px-2 mx-0 py-1 bg-neutral-200 text-neutral-400 hover:bg-neutral-300 hover:text-neutral-500 text-sm">
-            <Icon width={24} className="mr-2" icon="link" />
-          </button>
-
-          {/* Open in TeamDynamix button */}
-          <button
-            className="flex items-center gap-2 px-4 mx-0 py-1 bg-neutral-700 text-white hover:bg-neutral-600 text-sm"
-            onClick={() => window.open(ticket.webUrl, "_blank")}
-          >
-            Open in TeamDynamix
-            <Icon width={24} className="mr-2" color="white" icon="open" />
-          </button>
-        </span>
-      </div>
-    </div>
-  );
-};
-
-const TicketListCollapsibleSection = ({ group_name, ticket_data }) => {
-  return (
-    <div className="bg-neutral-100 p-4">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      {children}
+    <div className={`${(isOpen) ? "pb-2" : "pb-0"} mb-4 bg-neutral-100 px-4`}>
+      <button className="flex flex-row justify-between w-full text-lg font-semibold mb-2 pt-3 pb-2" onClick={toggleOpen}>
+        <h3>{(!group_name) ? "Unspecified Group" : group_name}</h3>
+        {isOpen ? <ChevronUp size={36} /> : <ChevronDown size={36} />}
+      </button>
+      {isOpen ? ticket_data.map((ticket: Ticket, index: number) => {
+        return <TicketListItem key={index} ticket={ticket} />
+      }) : null}
     </div>
   );
 }
 
-export default TicketListItem;
+/* ticket_data should be grouped ticket data
+ * i.e. output of organizeIntoGroups from GeneratedView.tsx
+ * This will not work if the ticket data is not grouped
+ */
+const TicketList = ({grouped_ticket_data}: {grouped_ticket_data: Record<string, Array<Ticket>>}) => {
+  return Object.entries(grouped_ticket_data).map(([group_name, ticket_data]) => (
+    <TicketListSection
+      key={group_name}
+      group_name={group_name}
+      ticket_data={ticket_data}
+    />
+  ))
+}
+
+
+export default TicketList;
