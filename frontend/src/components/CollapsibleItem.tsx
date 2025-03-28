@@ -12,13 +12,15 @@ function generateConfigTitle(config: IFormInputs): string {
   const parts: string[] = [];
 
   // grouping info
-  if (config.grouping !== "none") {
+  if (config.grouping === "none") {
+    parts.push(`All tickets`);
+  } else {
     parts.push(`Grouped by ${config.grouping}`);
   }
 
   // date range if present
   if (config.termStart) {
-    parts.push(`from ${formatDate(config.termStart)}`);
+    parts.push(` from ${formatDate(config.termStart)}`);
   }
 
   if (config.termEnd) {

@@ -38,8 +38,7 @@ function LogoutPage() {
     <div>
       <h1>Logout Page</h1>
       <p>
-        This is the logout page, which should only be visible to authenticated
-        users and immediately redirects them to the landing page.
+        Logging out...
       </p>
     </div>
   );

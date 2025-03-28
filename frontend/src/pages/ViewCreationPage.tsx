@@ -8,7 +8,7 @@ import { useAuth } from "../provider/AuthProvider";
 import Icon from "@/components/Icons";
 import type { IFormInputs, Ticket } from "@/types";
 import api from "@/api";
-
+;
 import { useLocation } from "react-router-dom";
 
 function ViewCreationPage() {
@@ -61,12 +61,14 @@ function ViewCreationPage() {
       <div ref={ref}>
         <GeneratedView data={filteredData || []} filter={filter} />
       </div>
-      <Button onClick={onSaveButtonClick}>
-        Save Image
-        <div className="place-self-center">
-          <Icon icon="save" width={4} />
-        </div>
-      </Button>
+      {filter.layout === "chart" && (
+        <Button onClick={onSaveButtonClick}>
+          Save Image
+          <div className="place-self-center">
+            <Icon icon="save" width={4} />
+          </div>
+        </Button>)
+      }
       <ReportCacheStatusCallout />
       {/* View Creation Form */}
       <ViewCreationForm filter={filter} setFilter={setFilter} />
