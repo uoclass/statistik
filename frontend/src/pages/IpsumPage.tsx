@@ -7,7 +7,7 @@
  * This contains lorem ipsum text, but can also be used for testing.
  */
 
-import TicketListItem from "../components/TicketListItem";
+import { TicketListItem } from "../components/TicketListItem";
 
 function IpsumPage() {
   /* This component displays the landing page.

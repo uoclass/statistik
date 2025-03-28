@@ -1,6 +1,4 @@
 /* Imports */
-import { hash, compare } from "bcrypt-ts";
-import { sign, verify } from "jsonwebtoken";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";

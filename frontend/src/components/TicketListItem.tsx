@@ -18,23 +18,27 @@ const TicketListItem = ({ticket}: {ticket: Ticket}) => {
       <h2 className="text-2xl! font-semibold mb-2">{ticket.title}</h2>
 
       {/* Requestor */}
-      <div className="mb-1 flex items-center">
-        <Icon width={24} className="mr-2" icon="user" />
-        <a
-          href={`mailto:${ticket.email}`}
-          className="text-blue-600 hover:underline"
-        >
-          {ticket.requestor}
-        </a>
-      </div>
+      {ticket.requestor && (
+        <div className="mb-1 flex items-center">
+          <Icon width={24} className="mr-2" icon="user" />
+          <a
+            href={`mailto:${ticket.email}`}
+            className="text-blue-600 hover:underline"
+          >
+            {ticket.requestor}
+          </a>
+        </div>)
+      }
 
       {/* Location */}
-      <div className="mb-1 flex items-center">
-        <Icon width={24} className="mr-2" icon="location" />
-        <span>
-          {ticket.location} {ticket.room}
-        </span>
-      </div>
+      {ticket.location && (
+        <div className="mb-1 flex items-center">
+          <Icon width={24} className="mr-2" icon="location" />
+          <span>
+            {ticket.location} {ticket.room}
+          </span>
+        </div>)
+      }
 
       {/* Time Created */}
       <div className="mb-1 flex items-center">
@@ -90,4 +94,4 @@ const TicketListItem = ({ticket}: {ticket: Ticket}) => {
   );
 };
 
-export default TicketListItem;
+export {TicketListItem, get_ticket_info_string};

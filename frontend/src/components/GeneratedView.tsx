@@ -16,7 +16,9 @@ import TicketList from "./TicketList";
  * Output is something like {"group name": [ticket1, ticket2, ...], "group name2": [ticket3, ticket4, ...], etc.}
  */
 const organizeIntoGroups = (data: Array<Ticket>, filter: IFormInputs) => {
+  console.log("The requested grouping is ", filter.grouping);
   if (filter.grouping === "diagnoses") {
+    // group by diagnoses (works a bit differently because a ticket can have multiple)
     let diagnosesCount: Record<string, Ticket[]> = {};
     if (filter.grouping === "diagnoses") {
       diagnosesCount = data.reduce((acc, ticket) => {
@@ -30,7 +32,11 @@ const organizeIntoGroups = (data: Array<Ticket>, filter: IFormInputs) => {
       }, diagnosesCount);
     }
     return diagnosesCount;
+  } else if (filter.layout === "list" && filter.grouping === "none") {
+    // group by none (i.e. return all tickets in a single group, only allowed for list)
+    return {"All Tickets": data}; // return all tickets in a single group
   } else {
+    // group by other groupings (those which only have one value per ticket)
     return Object.groupBy(data, (ticket: Ticket) => {
       switch (filter.grouping) {
         case "week":
@@ -45,9 +51,12 @@ const organizeIntoGroups = (data: Array<Ticket>, filter: IFormInputs) => {
         case "room":
           return `${ticket.location || "Unspecified Building"} ${ticket.room}`;
         default:
+          // handles case where layout is "chart" but somehow grouping is "none" (not allowed)
           return ticket.location;
+      }
+    });
   }
-})}};
+};
 
 const GeneratedView = ({
   filter,
@@ -60,7 +69,7 @@ const GeneratedView = ({
     return <ChartView filter={filter} data={data} />;
   } else if (filter.layout === "list") {
     const groupedData = organizeIntoGroups(data, filter);
-   return <TicketList grouped_ticket_data={groupedData} />;
+    return <TicketList grouped_ticket_data={groupedData as Record<string, Array<Ticket>>} />;
   } else {
     return (
       <div>

@@ -1,6 +1,6 @@
 import Icon from "./Icons";
 import type { Ticket } from "@/types";
-import TicketListItem from "./TicketListItem";
+import { TicketListItem, get_ticket_info_string } from "./TicketListItem";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
@@ -27,9 +27,25 @@ const TicketListSection = (
         <h3>{(!group_name) ? "Unspecified Group" : group_name}</h3>
         {isOpen ? <ChevronUp size={36} /> : <ChevronDown size={36} />}
       </button>
-      {isOpen ? ticket_data.map((ticket: Ticket, index: number) => {
-        return <TicketListItem key={index} ticket={ticket} />
-      }) : null}
+      {!isOpen ? null : <>
+        <button
+          className="px-3 flex items-center py-1 text-neutral-500 hover:text-neutral-600"
+          onClick={() => {
+            let to_clipboard = "";
+            for (let i = 0; i < ticket_data.length; i++) {
+              to_clipboard += i != 0 ? "\n-----\n" : "";
+              to_clipboard += get_ticket_info_string(ticket_data[i]);
+            }
+            navigator.clipboard.writeText(to_clipboard);
+          }}
+        >
+          <Icon width={20} className="mr-2" icon="copy" />
+          <span className="text-base">Copy all tickets in this section</span>
+        </button>
+        {ticket_data.map((ticket: Ticket, index: number) => {
+        return <TicketListItem key={index} ticket={ticket} />})}
+        </>
+        }
     </div>
   );
 }
